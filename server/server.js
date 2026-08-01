@@ -90,6 +90,9 @@ app.all("/*path", (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+// Bind to loopback only: the API is reached through the nginx reverse proxy in
+// production (and via localhost in dev), so it must not be exposed on the public
+// interface. Mirrors how the other services on the host bind.
+app.listen(PORT, "127.0.0.1", () => {
   console.log(`Server is running on ${PORT} port in ${NODE_ENV} mode`);
 });
