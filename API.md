@@ -4,7 +4,7 @@
 
 | Environment | Frontend | Backend API | Static/uploaded files |
 |---|---|---|---|
-| **Production** | `https://smarttemp.cdsproducts.cloud` | `https://smarttemp.cdsproducts.cloud/api` | `https://smarttemp.cdsproducts.cloud/public/...` |
+| **Production** | `https://smarttemp.72.61.254.7.sslip.io` | `https://smarttemp.72.61.254.7.sslip.io/api` | `https://smarttemp.72.61.254.7.sslip.io/public/...` |
 | **Local dev** | `http://localhost:5173` | `http://localhost:6300/api` | `http://localhost:6300/public/...` |
 
 **Auth model:** protected endpoints require a Firebase ID token in the header
@@ -94,6 +94,6 @@ logged-in user), `admin` (user whose Firebase claim `admin=true`).
 - App location: `/var/www/smarttemp` (server + client)
 - Backend binds `127.0.0.1:6300`; nginx (`/etc/nginx/sites-available/smarttemp_nginx`) reverse-proxies `/api` and `/public`, serves `client/dist`.
 - Rebuild frontend after changes:
-  `cd /var/www/smarttemp/client && VITE_API_BASE_URL=https://smarttemp.cdsproducts.cloud/api npm run build`
+  `cd /var/www/smarttemp/client && VITE_API_BASE_URL=https://smarttemp.72.61.254.7.sslip.io/api npm run build`
 - Deliverable files (private, not web-served): `/var/www/smarttemp/server/private/templates/`
 - Env: `/var/www/smarttemp/server/.env.production` (DB, EMAIL_*, CLIENT_URL)
