@@ -20,6 +20,11 @@ router.post(
   templateController.getAllTemplatesByCategory
 );
 router.post(
+  "/download/:templateId",
+  authController.gAuth,
+  templateController.downloadTemplate
+);
+router.post(
   "/create",
   authController.gAuth,
   authController.checkAdmin,
@@ -31,6 +36,8 @@ router.patch(
   "/update/:templateId",
   authController.gAuth,
   authController.checkAdmin,
+  templateController.uploadImages,
+  templateController.resizeImages,
   templateController.updateTemplate
 );
 router.delete(

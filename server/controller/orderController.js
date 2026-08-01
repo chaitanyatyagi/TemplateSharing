@@ -1,5 +1,6 @@
 const Order = require("../model/orderModel");
 const Template = require("../model/templateModel");
+const { sendPurchaseEmail } = require("../utils/email");
 
 exports.getOrdersByUser = async (req, res) => {
   try {
@@ -118,9 +119,22 @@ exports.createOrder = async (req, res) => {
       userZip,
     });
 
+    // Best-effort purchase email with the purchased templates attached.
+    // Never let an email hiccup fail the order — log and continue.
+    let emailSent = false;
+    try {
+      const orderedTemplates = templateIds
+        .map((id) => templateMap.get(id))
+        .filter(Boolean);
+      emailSent = await sendPurchaseEmail(order, orderedTemplates);
+    } catch (emailErr) {
+      console.error("Purchase email error:", emailErr.message);
+    }
+
     return res.status(201).json({
       status: "Success",
       message: "Order placed successfully",
+      emailSent,
       order,
     });
   } catch (error) {

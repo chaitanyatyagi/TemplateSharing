@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trash2, CheckCircle2, ArrowLeft, UploadCloud, X } from "lucide-react";
+import { Trash2, CheckCircle2, ArrowLeft, UploadCloud, X, FileText } from "lucide-react";
 import TemplateService from "../api/template";
 
 const initialFormData = {
@@ -7,6 +7,7 @@ const initialFormData = {
   card_content: "",
   template_title: "",
   template_url: "",
+  template_link: "",
   template_type: "paid",
   price: "",
   template_content: "",
@@ -20,6 +21,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [cardImage, setCardImage] = useState(null);
   const [templateImages, setTemplateImages] = useState([]);
+  const [templateFile, setTemplateFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -43,10 +45,16 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
     setTemplateImages((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  const handleTemplateFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) setTemplateFile(file);
+  };
+
   const resetForm = () => {
     setFormData(initialFormData);
     setCardImage(null);
     setTemplateImages([]);
+    setTemplateFile(null);
   };
 
   const handleCancel = () => {
@@ -85,6 +93,10 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
       setError("Please upload at least one template image");
       return;
     }
+    if (!templateFile && !formData.template_link?.trim()) {
+      setError("Add the deliverable: upload a template file or provide a download link");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -95,6 +107,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
         ...formData,
         card_image: cardImage,
         template_images: templateImages,
+        template_file: templateFile,
       });
 
       if (response.status === "Success") {
@@ -374,6 +387,59 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Deliverable File — what the buyer downloads / gets emailed */}
+          <div className="flex flex-col gap-2">
+            <label className="text-textDark font-semibold">Deliverable File</label>
+            <div
+              className="w-full min-h-24 border-2 border-dashed border-border bg-gray-50 rounded-md flex flex-col items-center justify-center text-grayLight text-sm text-center px-3 py-4 cursor-pointer hover:bg-gray-100 transition"
+              onClick={() => document.getElementById("template-file-upload").click()}
+            >
+              {templateFile ? (
+                <div className="flex items-center gap-2 text-textDark">
+                  <FileText size={20} className="text-bluePrimary" />
+                  <span className="font-medium break-all">{templateFile.name}</span>
+                </div>
+              ) : (
+                <>
+                  <UploadCloud className="mb-2 text-grayLight" size={26} />
+                  <p className="font-medium">Excel, PDF, Word, Figma export, ZIP…</p>
+                </>
+              )}
+              <input
+                id="template-file-upload"
+                type="file"
+                accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.ppt,.pptx,.fig,.zip,.txt,.png,.jpg,.jpeg,.svg"
+                onChange={handleTemplateFileSelect}
+                className="hidden"
+              />
+            </div>
+            {templateFile && (
+              <button
+                type="button"
+                onClick={() => setTemplateFile(null)}
+                className="text-xs text-redAccent self-start"
+              >
+                Remove file
+              </button>
+            )}
+          </div>
+
+          {/* Or a link (e.g. Figma) */}
+          <div className="flex flex-col gap-2">
+            <label className="text-textDark font-semibold">Or Download Link</label>
+            <input
+              type="text"
+              name="template_link"
+              value={formData.template_link}
+              onChange={handleInputChange}
+              placeholder="e.g. Figma share link (optional if a file is uploaded)"
+              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+            />
+            <p className="text-xs text-grayLight">
+              Provide a file, a link, or both. The buyer receives these on purchase and from their profile.
+            </p>
           </div>
         </div>
       </form>

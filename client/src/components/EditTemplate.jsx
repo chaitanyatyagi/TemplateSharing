@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Trash2, CheckCircle2, ArrowLeft, UploadCloud, FileText } from "lucide-react";
 import TemplateService from "../api/template";
 import { getTemplateImageUrl } from "../utils/assetUrl";
 
@@ -8,6 +8,7 @@ const initialFormData = {
   card_content: "",
   template_title: "",
   template_url: "",
+  template_link: "",
   template_type: "paid",
   price: "",
   template_content: "",
@@ -21,6 +22,8 @@ const EditTemplate = ({ setActiveMenu }) => {
   const [templateId, setTemplateId] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [cardImagePreview, setCardImagePreview] = useState("");
+  const [currentFileName, setCurrentFileName] = useState("");
+  const [templateFile, setTemplateFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -47,6 +50,7 @@ const EditTemplate = ({ setActiveMenu }) => {
             card_content: t.card_content || "",
             template_title: t.template_title || "",
             template_url: t.template_url || "",
+            template_link: t.template_link || "",
             template_type: t.template_type || "paid",
             price: t.price ?? "",
             template_content: t.template_content || "",
@@ -56,6 +60,7 @@ const EditTemplate = ({ setActiveMenu }) => {
             template_subcategory: t.template_subcategory || "",
           });
           setCardImagePreview(getTemplateImageUrl(t.card_image));
+          setCurrentFileName(t.template_file_original || "");
         } else {
           setError(response.message || "Failed to fetch template");
         }
@@ -79,6 +84,11 @@ const EditTemplate = ({ setActiveMenu }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleTemplateFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) setTemplateFile(file);
+  };
+
   const handleCancel = () => setActiveMenu("Template");
 
   const handleSubmit = async (e) => {
@@ -94,7 +104,10 @@ const EditTemplate = ({ setActiveMenu }) => {
       setError(null);
       setSuccess(null);
 
-      const response = await TemplateService.updateTemplate(templateId, formData);
+      const payload = templateFile
+        ? { ...formData, template_file: templateFile }
+        : formData;
+      const response = await TemplateService.updateTemplate(templateId, payload);
 
       if (response.status === "Success") {
         setSuccess("Template updated successfully!");
@@ -312,6 +325,58 @@ const EditTemplate = ({ setActiveMenu }) => {
           <p className="text-xs text-gray-500">
             Images can't be changed here yet — delete and recreate the template to change images.
           </p>
+
+          {/* Deliverable File */}
+          <label className="text-textDark font-semibold mt-2">Deliverable File</label>
+          {currentFileName && !templateFile && (
+            <div className="flex items-center gap-2 text-sm text-textDark bg-gray-50 border border-border rounded-md px-3 py-2">
+              <FileText size={18} className="text-bluePrimary shrink-0" />
+              <span className="break-all">{currentFileName}</span>
+            </div>
+          )}
+          <div
+            className="w-full min-h-20 border-2 border-dashed border-border bg-gray-50 rounded-md flex flex-col items-center justify-center text-grayLight text-sm text-center px-3 py-3 cursor-pointer hover:bg-gray-100 transition"
+            onClick={() => document.getElementById("edit-template-file-upload").click()}
+          >
+            {templateFile ? (
+              <div className="flex items-center gap-2 text-textDark">
+                <FileText size={18} className="text-bluePrimary" />
+                <span className="font-medium break-all">{templateFile.name}</span>
+              </div>
+            ) : (
+              <>
+                <UploadCloud className="mb-1 text-grayLight" size={22} />
+                <p className="font-medium">{currentFileName ? "Replace file" : "Upload file"}</p>
+              </>
+            )}
+            <input
+              id="edit-template-file-upload"
+              type="file"
+              accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.ppt,.pptx,.fig,.zip,.txt,.png,.jpg,.jpeg,.svg"
+              onChange={handleTemplateFileSelect}
+              className="hidden"
+            />
+          </div>
+          {templateFile && (
+            <button
+              type="button"
+              onClick={() => setTemplateFile(null)}
+              className="text-xs text-redAccent self-start"
+            >
+              Cancel replacement
+            </button>
+          )}
+
+          {/* Download Link */}
+          <label className="text-textDark font-semibold mt-2">Download Link</label>
+          <input
+            type="text"
+            name="template_link"
+            value={formData.template_link}
+            onChange={handleInputChange}
+            placeholder="e.g. Figma share link (optional)"
+            className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary text-sm"
+          />
         </div>
       </form>
     </div>

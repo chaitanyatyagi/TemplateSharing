@@ -13,7 +13,9 @@ import WishList from "../../assets/wish-list.png";
 import LogoutIcon from "../../assets/logout-icon.png";
 import Footer from "../../components/Footer";
 import OrderService from "../../api/order";
+import TemplateService from "../../api/template";
 import FavoritesService from "../../api/favorites";
+import { Download } from "lucide-react";
 import { getProfile, updateProfile } from "../../api/auth";
 import { getTemplateImageUrl, getServerAssetUrl } from "../../utils/assetUrl";
 
@@ -48,6 +50,9 @@ const Profile = () => {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersError, setOrdersError] = useState(null);
+
+  const [downloadingId, setDownloadingId] = useState(null);
+  const [downloadError, setDownloadError] = useState(null);
 
   const [wishlistTemplates, setWishlistTemplates] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(true);
@@ -139,6 +144,22 @@ const Profile = () => {
 
   const handleEditChange = (e) => {
     setEditForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleDownload = async (templateId, templateName) => {
+    try {
+      setDownloadError(null);
+      setDownloadingId(templateId);
+      const result = await TemplateService.downloadTemplate(templateId, templateName);
+      if (result?.type === "link" && result.link) {
+        window.open(result.link, "_blank", "noopener,noreferrer");
+      }
+    } catch (err) {
+      console.error("Download error:", err);
+      setDownloadError(err.message || "Failed to download template");
+    } finally {
+      setDownloadingId(null);
+    }
   };
 
   const handleSaveProfile = async (e) => {
@@ -347,6 +368,13 @@ const Profile = () => {
               </div>
             </div>
 
+            {/* Download error */}
+            {menu === "purchasedItems" && downloadError && (
+              <div className="mx-4 mt-1 p-3 bg-redAccent/10 text-redAccent rounded-md text-sm">
+                {downloadError}
+              </div>
+            )}
+
             {/* Cards */}
             <div className="rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 overflow-y-auto">
               {menu === "purchasedItems" ? (
@@ -372,11 +400,13 @@ const Profile = () => {
                   purchasedItems.map((item) => (
                     <div
                       key={item.key}
-                      className="border rounded-xl p-4 bg-white flex flex-col gap-2 cursor-pointer hover:shadow-md transition"
-                      onClick={() => navigate(`/templates/${item.templateId}`)}
+                      className="border rounded-xl p-4 bg-white flex flex-col gap-2"
                     >
-                      <div className="flex justify-between items-start gap-2">
-                        <p className="font-semibold text-textDark">{item.templateName}</p>
+                      <div
+                        className="flex justify-between items-start gap-2 cursor-pointer"
+                        onClick={() => navigate(`/templates/${item.templateId}`)}
+                      >
+                        <p className="font-semibold text-textDark hover:text-bluePrimary transition">{item.templateName}</p>
                         <span
                           className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLES[item.orderStatus] || "bg-gray-100 text-gray-600"}`}
                         >
@@ -392,6 +422,15 @@ const Profile = () => {
                           ₹{item.price * item.quantity}
                         </span>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => handleDownload(item.templateId, item.templateName)}
+                        disabled={downloadingId === item.templateId}
+                        className="mt-2 flex items-center justify-center gap-2 w-full bg-bluePrimary text-white rounded-md px-3 py-2 text-sm font-semibold hover:bg-blueHover transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Download size={16} />
+                        {downloadingId === item.templateId ? "Preparing..." : "Download"}
+                      </button>
                     </div>
                   ))
                 )

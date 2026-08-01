@@ -1,15 +1,26 @@
 const Template = require("../model/templateModel");
+const Order = require("../model/orderModel");
 const multer = require("multer");
 const Jimp = require("jimp");
 const path = require("path");
 const fs = require("fs");
 
 const templatesDir = path.join(__dirname, "../public/templates");
+// Private directory for the actual downloadable deliverables. NOT served by
+// express.static, so files can only be reached through the gated download route.
+const templateFilesDir = path.join(__dirname, "../private/templates");
+if (!fs.existsSync(templateFilesDir)) {
+  fs.mkdirSync(templateFilesDir, { recursive: true });
+}
 
 const multerStorage = multer.memoryStorage();
 
+// Image fields must be images; the deliverable (template_file) can be any type
+// (xlsx, pdf, docx, figma export, zip, ...). Admin-only route, so we stay permissive.
 const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
+  if (file.fieldname === "template_file") {
+    cb(null, true);
+  } else if (file.mimetype.startsWith("image")) {
     cb(null, true);
   } else {
     req.msg = "Only image is allowed";
@@ -19,16 +30,32 @@ const multerFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: multerStorage,
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB cap for the deliverable file
   fileFilter: multerFilter,
 });
 
 exports.uploadImages = upload.fields([
   { name: "card_image", maxCount: 1 },
   { name: "template_images", maxCount: 5 },
+  { name: "template_file", maxCount: 1 },
 ]);
+
+// Turns a filename into a filesystem-safe, unique basename for the private dir.
+const buildTemplateFileName = (originalname) => {
+  const safe = String(originalname).replace(/[^a-zA-Z0-9._-]/g, "_");
+  return `tf-${Date.now()}-${safe}`;
+};
 
 exports.resizeImages = async (req, res, next) => {
   if (!req.files) return next();
+
+  // Persist the deliverable file (if any) to the private directory as-is.
+  if (req.files["template_file"]) {
+    const file = req.files["template_file"][0];
+    const storedName = buildTemplateFileName(file.originalname);
+    fs.writeFileSync(path.join(templateFilesDir, storedName), file.buffer);
+    file.storedName = storedName;
+  }
 
   if (req.files["card_image"]) {
     const mainImage = req.files["card_image"][0];
@@ -127,6 +154,8 @@ exports.createTemplate = async (req, res) => {
   try {
     let template_images = [];
     let card_image;
+    let template_file;
+    let template_file_original;
     if (req.msg == "Only image is allowed") {
       return res.status(400).json({
         status: "Error",
@@ -142,6 +171,11 @@ exports.createTemplate = async (req, res) => {
           template_images.push(file.filename);
         });
       }
+      if (req.files["template_file"]) {
+        const f = req.files["template_file"][0];
+        template_file = f.storedName;
+        template_file_original = f.originalname;
+      }
     }
 
     const {
@@ -156,6 +190,7 @@ exports.createTemplate = async (req, res) => {
       template_tags,
       template_category,
       template_subcategory,
+      template_link,
     } = req.body;
 
     // Check for missing fields
@@ -196,6 +231,9 @@ exports.createTemplate = async (req, res) => {
       template_images,
       template_title,
       template_url,
+      template_file,
+      template_file_original,
+      template_link: template_link || "",
       template_type,
       price,
       template_content,
@@ -233,11 +271,26 @@ exports.updateTemplate = async (req, res) => {
         .filter(Boolean);
     }
 
+    // Replace the deliverable file if a new one was uploaded.
+    let oldFileToRemove;
+    if (req.files && req.files["template_file"]) {
+      const f = req.files["template_file"][0];
+      const existing = await Template.findById(templateId).select("template_file");
+      if (existing && existing.template_file) oldFileToRemove = existing.template_file;
+      updateData.template_file = f.storedName;
+      updateData.template_file_original = f.originalname;
+    }
+
     const updatedTemplate = await Template.findByIdAndUpdate(
       templateId,
       updateData,
       { new: true, runValidators: true }
     );
+
+    if (updatedTemplate && oldFileToRemove) {
+      const oldPath = path.join(templateFilesDir, oldFileToRemove);
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    }
     if (!updatedTemplate) {
       return res
         .status(404)
@@ -278,6 +331,12 @@ exports.deleteTemplate = async (req, res) => {
       }
     });
 
+    // Remove the private deliverable file too.
+    if (template.template_file) {
+      const deliverablePath = path.join(templateFilesDir, template.template_file);
+      if (fs.existsSync(deliverablePath)) fs.unlinkSync(deliverablePath);
+    }
+
     return res.status(200).json({
       status: "Success",
       message: "Template deleted successfully",
@@ -287,6 +346,68 @@ exports.deleteTemplate = async (req, res) => {
       return res.status(400).json({ status: "Error", message: error.message });
     }
     res.status(500).json({
+      status: "Error",
+      message: error.message,
+    });
+  }
+};
+
+// Ownership-gated download of a template's deliverable.
+// Allowed if: the template is free, the requester is an admin, OR the requester
+// has an order containing this template. Streams the private file, or returns
+// the external link when the template is delivered as a link (e.g. Figma).
+exports.downloadTemplate = async (req, res) => {
+  try {
+    const { templateId } = req.params;
+    const template = await Template.findById(templateId);
+    if (!template) {
+      return res.status(404).json({ status: "Error", message: "Template not found" });
+    }
+
+    const isAdmin = req.role === "admin";
+    const isFree = template.template_type === "free";
+    let owns = isAdmin || isFree;
+
+    if (!owns) {
+      const order = await Order.findOne({
+        userId: req.userId,
+        "items.templateId": templateId,
+      }).select("_id");
+      owns = Boolean(order);
+    }
+
+    if (!owns) {
+      return res.status(403).json({
+        status: "Error",
+        message: "You need to purchase this template before downloading it.",
+      });
+    }
+
+    if (template.template_file) {
+      const filePath = path.join(templateFilesDir, template.template_file);
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({
+          status: "Error",
+          message: "Template file is no longer available. Please contact support.",
+        });
+      }
+      return res.download(filePath, template.template_file_original || template.template_file);
+    }
+
+    if (template.template_link) {
+      return res.status(200).json({
+        status: "Success",
+        message: "Template is delivered via link",
+        link: template.template_link,
+      });
+    }
+
+    return res.status(404).json({
+      status: "Error",
+      message: "No downloadable file is attached to this template yet.",
+    });
+  } catch (error) {
+    return res.status(500).json({
       status: "Error",
       message: error.message,
     });
