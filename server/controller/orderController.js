@@ -126,7 +126,9 @@ exports.createOrder = async (req, res) => {
       const orderedTemplates = templateIds
         .map((id) => templateMap.get(id))
         .filter(Boolean);
-      emailSent = await sendPurchaseEmail(order, orderedTemplates);
+      // Send to the logged-in buyer's account email (authoritative), not just
+      // whatever was typed into the checkout form.
+      emailSent = await sendPurchaseEmail(order, orderedTemplates, req.user?.email);
     } catch (emailErr) {
       console.error("Purchase email error:", emailErr.message);
     }

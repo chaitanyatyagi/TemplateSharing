@@ -31,11 +31,13 @@ function isEmailConfigured() {
  * Send the "purchase successful" email to the buyer with each purchased
  * template attached (when a file exists) and any external deliverable links.
  *
- * @param {Object} order      the saved Order document
- * @param {Array}  templates  the Template documents included in the order
+ * @param {Object} order          the saved Order document
+ * @param {Array}  templates       the Template documents included in the order
+ * @param {String} recipientEmail  preferred recipient (the logged-in buyer's
+ *                                  account email); falls back to order.userEmail
  * @returns {Promise<boolean>} true if sent, false if skipped/failed
  */
-async function sendPurchaseEmail(order, templates) {
+async function sendPurchaseEmail(order, templates, recipientEmail) {
   const transporter = getTransporter();
   if (!transporter) {
     console.warn(
@@ -44,9 +46,11 @@ async function sendPurchaseEmail(order, templates) {
     return false;
   }
 
-  const to = order.userEmail;
+  // Deliver to the logged-in buyer's account email; fall back to the billing
+  // email captured at checkout if for some reason the account has none.
+  const to = recipientEmail || order.userEmail;
   if (!to) {
-    console.warn("[email] Order has no userEmail — skipping purchase email.");
+    console.warn("[email] No recipient email — skipping purchase email.");
     return false;
   }
 
