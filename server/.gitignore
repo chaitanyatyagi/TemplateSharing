@@ -1,1 +1,10 @@
 /config
+
+# Secrets — never commit. Keep these only on each machine / the server.
+.env
+.env.development
+.env.production
+.env.*.local
+
+# Node
+node_modules/

@@ -50,9 +50,7 @@ exports.signupPhone = async (req, res) => {
 
 exports.signupGoogle = async (req, res) => {
   try {
-    console.log("enter google signup");
     const { email, name, userId } = req.body;
-    console.log(req.body);
     const adminEmail =
       process.env.NODE_ENV === "production"
         ? "2020uch1395@mnit.ac.in"
