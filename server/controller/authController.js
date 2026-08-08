@@ -51,12 +51,14 @@ exports.signupPhone = async (req, res) => {
 exports.signupGoogle = async (req, res) => {
   try {
     const { email, name, userId } = req.body;
-    const adminEmail =
-      process.env.NODE_ENV === "production"
-        ? "2020uch1395@mnit.ac.in"
-        : "chaitanyatyagi1540@gmail.com";
+    // Emails granted admin access (case-insensitive). Add more here as needed.
+    const ADMIN_EMAILS = [
+      "chaitanyatyagi1540@gmail.com",
+      "2020uch1395@mnit.ac.in",
+      "templatecraft11@gmail.com",
+    ];
 
-    const isAdminEmail = email === adminEmail;
+    const isAdminEmail = ADMIN_EMAILS.includes((email || "").toLowerCase());
     if (isAdminEmail) {
       setAdminRole(userId);
     }
