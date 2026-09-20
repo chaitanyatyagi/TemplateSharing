@@ -71,7 +71,7 @@ const Order = () => {
   return (
   <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
     {error && (
-      <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">{error}</div>
+      <div className="mb-4 p-3 bg-redAccent/10 text-redAccent rounded-md text-sm">{error}</div>
     )}
     {/* ======= Top Stats Cards ======= */}
     <div className="flex flex-col sm:flex-row flex-wrap justify-between items-stretch gap-4">

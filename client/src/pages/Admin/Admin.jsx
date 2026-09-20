@@ -134,7 +134,7 @@ const Admin = () => {
         </div>
 
         {/* MAIN CONTENT */}
-        <div className="flex justify-start items-start w-full md:w-[85vw] p-2 sm:p-4 overflow-y-auto">
+        <div className="flex justify-start items-start w-full md:w-[85vw] p-2 sm:p-4 overflow-y-auto bg-background">
           {activeMenu === "Dashboard" && <DashboardPage />}
           {activeMenu === "Orders" && <OrderPage />}
           {activeMenu === "Users Data" && <UserData />}

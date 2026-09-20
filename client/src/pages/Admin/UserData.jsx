@@ -54,7 +54,7 @@ const UserData = () => {
     </div>
 
     {error && (
-      <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">{error}</div>
+      <div className="mt-4 p-3 bg-redAccent/10 text-redAccent rounded-md text-sm">{error}</div>
     )}
 
     {/* ======= Responsive Table ======= */}

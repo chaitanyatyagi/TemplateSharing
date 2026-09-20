@@ -17,6 +17,7 @@ export default {
         // Accents
         greenAccent: "#17BF88",
         redAccent: "#EF4444",
+        amberAccent: "#F59E0B",
         // Text
         textHeading: "#1F2937",   // headings / strongest text
         textDark: "#414A5A",      // strong body text

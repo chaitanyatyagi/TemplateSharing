@@ -94,7 +94,7 @@ const Blog = () => {
           <>
             <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center mt-8 shadow-sm p-4 rounded-md bg-white font-inter">Blog Management</div>
             {error && (
-              <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">{error}</div>
+              <div className="mt-4 p-3 bg-redAccent/10 text-redAccent rounded-md text-sm">{error}</div>
             )}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 shadow-sm p-2 rounded-md bg-white font-inter relative">
               {/* Left: Dropdown + Search */}
@@ -102,15 +102,15 @@ const Blog = () => {
                 {/* Dropdown */}
                 <div className="relative">
                   <div
-                    className="flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 w-[150px] cursor-pointer hover:border-gray-400 transition"
+                    className="flex items-center justify-between border border-borderLight rounded-md px-3 py-2 w-[150px] cursor-pointer hover:border-border transition"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    <span className="text-sm text-gray-700 font-inter">
+                    <span className="text-sm text-textDark font-inter">
                       {selectedCategory}
                     </span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`h-4 w-4 text-gray-500 transform transition-transform ${isDropdownOpen ? "rotate-180" : "rotate-0"
+                      className={`h-4 w-4 text-textMuted transform transition-transform ${isDropdownOpen ? "rotate-180" : "rotate-0"
                         }`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -125,12 +125,12 @@ const Blog = () => {
 
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-md">
+                    <div className="absolute z-10 mt-1 w-full bg-white border border-borderLight rounded-md shadow-md">
                       {categories.map((cat, idx) => (
                         <div
                           key={idx}
                           onClick={() => handleSelect(cat)}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-lightBlue ${selectedCategory === cat ? "text-bluePrimary font-semibold" : "text-gray-700"
+                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-lightBlue ${selectedCategory === cat ? "text-bluePrimary font-semibold" : "text-textDark"
                             }`}
                         >
                           {cat}
@@ -141,10 +141,10 @@ const Blog = () => {
                 </div>
 
                 {/* Search box */}
-                <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 w-full sm:w-[250px]">
+                <div className="flex items-center border border-borderLight rounded-md px-3 py-2 w-full sm:w-[250px]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-gray-400"
+                    className="h-4 w-4 text-grayLight"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

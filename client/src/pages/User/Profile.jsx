@@ -20,9 +20,9 @@ import { getProfile, updateProfile } from "../../api/auth";
 import { getTemplateImageUrl, getServerAssetUrl } from "../../utils/assetUrl";
 
 const STATUS_STYLES = {
-  pending: "bg-yellow-100 text-yellow-700",
-  completed: "bg-green-100 text-green-700",
-  failed: "bg-red-100 text-red-700",
+  pending: "bg-amberAccent/10 text-amberAccent",
+  completed: "bg-greenAccent/10 text-greenAccent",
+  failed: "bg-redAccent/10 text-redAccent",
 };
 
 const emptyEditForm = {
@@ -225,7 +225,7 @@ const Profile = () => {
           <div className="flex flex-row gap-2 mt-3 sm:mt-0">
             {isAdmin && (
               <div
-                className="flex flex-row h-[35px] px-3 gap-2 items-center justify-center border border-bluePrimary rounded-lg cursor-pointer"
+                className="flex flex-row h-[35px] px-3 gap-2 items-center justify-center border border-bluePrimary rounded-xl cursor-pointer"
                 onClick={() => navigate("/admin")}
               >
                 <p className="text-bluePrimary text-sm sm:text-md font-inter">Admin Panel</p>
@@ -246,7 +246,7 @@ const Profile = () => {
           <div className="w-[90%] sm:w-[85%] bg-white rounded-2xl mt-4 p-4">
             <form onSubmit={handleSaveProfile} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {profileError && (
-                <div className="sm:col-span-2 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+                <div className="sm:col-span-2 p-3 bg-redAccent/10 text-redAccent rounded-xl text-sm">
                   {profileError}
                 </div>
               )}
@@ -256,7 +256,7 @@ const Profile = () => {
                 placeholder="Full name"
                 value={editForm.name}
                 onChange={handleEditChange}
-                className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="border border-borderLight rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
               />
               <input
                 type="tel"
@@ -264,7 +264,7 @@ const Profile = () => {
                 placeholder="Phone number"
                 value={editForm.contact}
                 onChange={handleEditChange}
-                className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="border border-borderLight rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
               />
               <input
                 type="text"
@@ -272,7 +272,7 @@ const Profile = () => {
                 placeholder="Address"
                 value={editForm.address}
                 onChange={handleEditChange}
-                className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary sm:col-span-2"
+                className="border border-borderLight rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary sm:col-span-2"
               />
               <input
                 type="text"
@@ -280,7 +280,7 @@ const Profile = () => {
                 placeholder="City"
                 value={editForm.city}
                 onChange={handleEditChange}
-                className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="border border-borderLight rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
               />
               <input
                 type="text"
@@ -288,7 +288,7 @@ const Profile = () => {
                 placeholder="State"
                 value={editForm.state}
                 onChange={handleEditChange}
-                className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="border border-borderLight rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
               />
               <input
                 type="text"
@@ -296,12 +296,12 @@ const Profile = () => {
                 placeholder="Pincode"
                 value={editForm.pincode}
                 onChange={handleEditChange}
-                className="border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="border border-borderLight rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bluePrimary"
               />
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="bg-bluePrimary text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-blueHover transition disabled:opacity-50 sm:col-span-2"
+                className="bg-bluePrimary text-white rounded-xl px-4 py-2 text-sm font-semibold hover:bg-blueHover transition disabled:opacity-50 sm:col-span-2"
               >
                 {savingProfile ? "Saving..." : "Save changes"}
               </button>
@@ -383,7 +383,7 @@ const Profile = () => {
                     Loading your orders...
                   </p>
                 ) : ordersError ? (
-                  <p className="text-red-500 text-center w-full py-10 sm:col-span-2 xl:col-span-3">
+                  <p className="text-redAccent text-center w-full py-10 sm:col-span-2 xl:col-span-3">
                     {ordersError}
                   </p>
                 ) : purchasedItems.length === 0 ? (
@@ -408,7 +408,7 @@ const Profile = () => {
                       >
                         <p className="font-semibold text-textDark hover:text-bluePrimary transition">{item.templateName}</p>
                         <span
-                          className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLES[item.orderStatus] || "bg-gray-100 text-gray-600"}`}
+                          className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_STYLES[item.orderStatus] || "bg-background text-textMuted"}`}
                         >
                           {item.orderStatus}
                         </span>
