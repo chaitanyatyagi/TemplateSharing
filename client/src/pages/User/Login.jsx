@@ -44,23 +44,24 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-white">
+    <div className="flex flex-col min-h-screen w-full bg-background">
       <Navbar />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-4 py-14 overflow-hidden">
+        <div className="pointer-events-none absolute top-10 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-lightBlue/50 blur-[120px]" />
+        <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-borderLight">
           <div className="flex flex-col items-center mb-8">
             <img
               src={MainLogo}
               alt="Main Logo"
-              className="h-[40px] w-auto mb-4"
+              className="h-[40px] w-auto mb-5"
             />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600 text-center">Sign in to access your account and continue your productivity journey</p>
+            <h1 className="text-2xl font-bold text-textHeading mb-2">Welcome back</h1>
+            <p className="text-textMuted text-center text-sm">Sign in to access your templates, downloads and saved content.</p>
           </div>
 
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-center">
+            <div className="bg-redAccent/10 text-redAccent px-4 py-3 rounded-xl mb-6 text-center text-sm">
               {error}
             </div>
           )}
@@ -69,7 +70,7 @@ const Login = () => {
             <button
               onClick={handleGoogleAuthClick}
               disabled={loading}
-              className="w-full bg-white text-gray-700 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              className="w-full bg-white text-textHeading py-3 rounded-xl border border-border hover:bg-background hover:border-bluePrimary transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 font-medium"
             >
               <svg className="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill="#4285F4" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
@@ -83,7 +84,7 @@ const Login = () => {
             </button>
           </div>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-6 text-center text-xs text-grayLight">
             <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
           </div>
         </div>

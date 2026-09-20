@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Heart, Bookmark } from "lucide-react";
+import { Heart, Bookmark, ArrowLeft } from "lucide-react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
 import BlogContent from "../../components/BlogContent";
@@ -148,71 +148,50 @@ const BlogIndividual = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      <div className="min-h-[73vh] w-[90%] max-w-4xl flex flex-col gap-6 justify-start items-start mx-auto bg-white my-6">
-        {/* Blog Image with optimized loading */}
-        <img
-          src={getServerAssetUrl(blog.imageUrls?.medium || blog.imageUrl) || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800"}
-          alt={blog.name}
-          className="w-full h-[300px] sm:h-[350px] md:h-[400px] object-cover rounded-lg"
-          loading="lazy"
-          onError={(e) => {
-            console.error("Image failed to load:", blog.imageUrls?.medium || blog.imageUrl);
-            e.target.src = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800";
-          }}
-        />
 
-        {/* Title + Actions */}
-        <div className="w-full flex justify-between items-center flex-wrap gap-3">
-          <p className="font-inter text-xl sm:text-2xl md:text-3xl text-textHeading font-semibold leading-snug">
-            {blog.name}
-          </p>
+      <article className="flex-1 w-full max-w-3xl mx-auto px-5 sm:px-8 py-8">
+        <button onClick={() => navigate("/blogs")} className="inline-flex items-center gap-2 text-textMuted hover:text-bluePrimary transition mb-6 text-sm font-medium">
+          <ArrowLeft size={16} /> Back to blogs
+        </button>
 
-          {/* Like & Save Buttons */}
+        {/* Category + title */}
+        <span className="inline-block bg-lightBlue text-bluePrimary text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full capitalize">
+          {blog.type}
+        </span>
+        <h1 className="mt-4 text-3xl sm:text-4xl font-bold text-textHeading leading-tight tracking-tight">
+          {blog.name}
+        </h1>
+
+        {/* Meta / actions */}
+        <div className="flex items-center justify-between gap-3 mt-4 mb-6 border-b border-borderLight pb-5">
           <div className="flex items-center gap-5">
-            {/* Like */}
-            <button
-              onClick={handleLike}
-              className="flex items-center gap-1 focus:outline-none transition-all"
-            >
-              <Heart
-                size={22}
-                fill={liked ? "red" : "none"}
-                color={liked ? "red" : "#606060"}
-                className="cursor-pointer transition-all"
-              />
-              <span className="text-textMuted text-base">{likesCount}</span>
+            <button onClick={handleLike} disabled={likeBusy} className="flex items-center gap-1.5 text-textMuted hover:text-redAccent transition focus:outline-none disabled:opacity-60">
+              <Heart size={20} fill={liked ? "#EF4444" : "none"} color={liked ? "#EF4444" : "currentColor"} />
+              <span className="text-sm font-medium">{likesCount}</span>
             </button>
-
-            {/* Save */}
-            <button
-              onClick={handleSave}
-              className="focus:outline-none transition-all"
-            >
-              <Bookmark
-                size={22}
-                fill={saved ? "#2563EB" : "none"}
-                color={saved ? "#2563EB" : "#606060"}
-                className="cursor-pointer transition-all"
-              />
+            <button onClick={handleSave} className="text-textMuted hover:text-bluePrimary transition focus:outline-none" aria-label="Save blog">
+              <Bookmark size={20} fill={saved ? "#2563EB" : "none"} color={saved ? "#2563EB" : "currentColor"} />
             </button>
           </div>
         </div>
 
-        {/* Blog Content (rich HTML) */}
-        <BlogContent html={blog.content} />
+        {/* Hero image */}
+        <img
+          src={getServerAssetUrl(blog.imageUrls?.medium || blog.imageUrl) || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800"}
+          alt={blog.name}
+          className="w-full h-[280px] sm:h-[360px] md:h-[420px] object-cover rounded-2xl shadow-sm mb-8"
+          loading="lazy"
+          onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800"; }}
+        />
 
-        {/* Blog Category */}
-        <div className="mt-4">
-          <span className="inline-block bg-lightBlue text-bluePrimary text-sm font-medium px-3 py-1 rounded-lg">
-            {blog.type}
-          </span>
-        </div>
-      </div>
+        {/* Content */}
+        <BlogContent html={blog.content} />
+      </article>
 
       <Footer />
-    </>
+    </div>
   );
 };
 
