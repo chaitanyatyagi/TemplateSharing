@@ -223,11 +223,15 @@ exports.getAllBlogs = async (req, res) => {
 
     const total = await Blog.countDocuments(query);
 
-    // Enhance with optimized thumbnail URLs
-    const optimizedBlogs = blogs.map((blog) => ({
-      ...blog._doc,
-      imageUrl: `/api/blog/stream/${blog.image}-thumbnail.webp`,
-    }));
+    // Enhance with optimized thumbnail URLs + per-user like state; hide raw likes list.
+    const optimizedBlogs = blogs.map((blog) => {
+      const { likes, ...rest } = blog._doc;
+      return {
+        ...rest,
+        likedByMe: req.userId ? (likes || []).includes(req.userId) : false,
+        imageUrl: `/api/blog/stream/${blog.image}-thumbnail.webp`,
+      };
+    });
 
     return res.status(200).json({
       status: "Success",
@@ -274,11 +278,15 @@ exports.getAllBlogsByCategory = async (req, res) => {
 
     const total = await Blog.countDocuments(categoryQuery);
 
-    // Enhance with optimized thumbnail URLs
-    const optimizedBlogs = blogs.map((blog) => ({
-      ...blog._doc,
-      imageUrl: `/api/blog/stream/${blog.image}-thumbnail.webp`,
-    }));
+    // Enhance with optimized thumbnail URLs + per-user like state; hide raw likes list.
+    const optimizedBlogs = blogs.map((blog) => {
+      const { likes, ...rest } = blog._doc;
+      return {
+        ...rest,
+        likedByMe: req.userId ? (likes || []).includes(req.userId) : false,
+        imageUrl: `/api/blog/stream/${blog.image}-thumbnail.webp`,
+      };
+    });
 
     return res.status(200).json({
       status: "Success",

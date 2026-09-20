@@ -5,17 +5,17 @@ const blogController = require("../controller/blogController");
 
 router.post(
   "/get-one/:blogId",
-  authController.gAuth,
+  authController.optionalAuth,
   blogController.getBlogById
 );
 router.post(
   "/get-all",
-  authController.gAuth,
+  authController.optionalAuth,
   blogController.getAllBlogs
 );
 router.post(
   "/get-all-by-category",
-  authController.gAuth,
+  authController.optionalAuth,
   blogController.getAllBlogsByCategory
 );
 router.post(

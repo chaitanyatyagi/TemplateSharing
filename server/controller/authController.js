@@ -315,6 +315,40 @@ exports.checkAdmin = async (req, res, next) => {
   }
 };
 
+// Optional auth for PUBLIC reads (listings, detail pages). A guest (no/invalid
+// token) is allowed through as an anonymous visitor; a valid token populates
+// req.user/req.userId/req.role so personalised data (drafts for admins, likedByMe,
+// etc.) still works. Never blocks the request.
+exports.optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) return next();
+
+    const token = authHeader.split(" ")[1];
+    if (!token) return next();
+
+    let decodeValue;
+    try {
+      decodeValue = await admin.auth().verifyIdToken(token);
+    } catch {
+      return next(); // invalid/expired token → treat as guest for public reads
+    }
+
+    if (decodeValue && decodeValue.uid) {
+      req.userId = decodeValue.uid;
+      const user = await User.findOne({ userId: req.userId });
+      if (user) {
+        req.user = user;
+        req.role = user.role || "user";
+      }
+    }
+    return next();
+  } catch (error) {
+    console.error("optionalAuth error:", error.message);
+    return next(); // never block a public read
+  }
+};
+
 exports.gAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;

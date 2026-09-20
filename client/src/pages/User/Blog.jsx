@@ -6,14 +6,12 @@ import Card from "../../components/blogCard";
 import BlogCarousel from "../../components/BlogCarousel";
 import BlogService from "../../api/blog";
 import { getServerAssetUrl } from "../../utils/assetUrl";
-import { useNavigate } from "react-router-dom";
 
 const Blog = () => {
     const [category, setCategory] = useState("all");
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
 
     const options = [
         { value: "all", label: "All Category" },
@@ -55,9 +53,6 @@ const Blog = () => {
         fetchBlogs();
     }, [category]);
 
-    const handleCardClick = (blogId) => {
-        navigate(`/blogs/${blogId}`);
-    };
 return (
     <div className="min-h-screen">
       <Navbar />
@@ -123,11 +118,12 @@ return (
                     key={blog._id}
                     id={blog._id}
                     title={blog.name}
-                    description={blog.content.substring(0, 100) + "..."}
+                    description={(blog.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().substring(0, 100) + "..."}
                     category={blog.type}
+                    likesCount={blog.likesCount || 0}
+                    isLiked={blog.likedByMe || false}
                     imageUrl={getServerAssetUrl(blog.imageUrl || blog.imageUrls?.thumbnail)}
                     useOptimizedLoading={true}
-                    onClick={() => handleCardClick(blog._id)}
                   />
                 ))
               )}

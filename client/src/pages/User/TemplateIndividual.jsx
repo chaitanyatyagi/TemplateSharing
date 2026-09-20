@@ -7,12 +7,16 @@ import TemplateService from "../../api/template";
 import { getTemplateImageUrl } from "../../utils/assetUrl";
 import { useCart } from "../../context/CartContext";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useAuth } from "../../context/AuthContext";
+import { useSnackbar } from "notistack";
 
 const TemplateIndividual = () => {
   const { templateId } = useParams();
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { isWishlisted, toggleWishlist } = useFavorites();
+  const { user } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [template, setTemplate] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
@@ -46,8 +50,14 @@ const TemplateIndividual = () => {
     }
   }, [templateId]);
 
+  const requireLogin = (message) => {
+    enqueueSnackbar(message, { variant: "info", anchorOrigin: { vertical: "top", horizontal: "center" } });
+    navigate("/login");
+  };
+
   const handleAddToCart = () => {
     if (!template) return;
+    if (!user) return requireLogin("Log in to add templates to your cart");
     addItem({
       templateId: template._id,
       title: template.name,
@@ -56,6 +66,12 @@ const TemplateIndividual = () => {
       price: Number(template.price) || 0,
     });
     setAddedToCart(true);
+    enqueueSnackbar("Added to cart", { variant: "success", anchorOrigin: { vertical: "top", horizontal: "center" } });
+  };
+
+  const handleWishlist = () => {
+    if (!user) return requireLogin("Log in to save templates to your wishlist");
+    toggleWishlist(templateId);
   };
 
   if (loading) {
@@ -81,7 +97,7 @@ const TemplateIndividual = () => {
         <Navbar />
         <div className="min-h-[73vh] flex flex-col items-center justify-center">
           <div className="text-center">
-            <p className="text-red-500 text-lg mb-4">{error || "Template not found"}</p>
+            <p className="text-redAccent text-lg mb-4">{error || "Template not found"}</p>
             <button
               onClick={() => navigate("/templates")}
               className="px-6 py-3 bg-bluePrimary text-white rounded-md hover:bg-blueHover transition"
@@ -182,8 +198,8 @@ const TemplateIndividual = () => {
             {addedToCart ? "Added to cart" : "Add to cart"}
           </button>
           <button
-            onClick={() => toggleWishlist(templateId)}
-            className="flex items-center gap-2 border border-gray-300 px-5 py-3 rounded-lg hover:bg-gray-50 transition-all"
+            onClick={handleWishlist}
+            className="flex items-center gap-2 border border-borderLight px-5 py-3 rounded-xl hover:bg-background transition-all"
             aria-label="Toggle wishlist"
           >
             <Heart

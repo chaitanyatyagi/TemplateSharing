@@ -172,8 +172,10 @@ const Home = () => {
                 <Card
                   id={blog._id}
                   title={blog.name}
-                  description={blog.content.substring(0, 100) + "..."}
+                  description={(blog.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().substring(0, 100) + "..."}
                   category={blog.type}
+                  likesCount={blog.likesCount || 0}
+                  isLiked={blog.likedByMe || false}
                   imageUrl={getServerAssetUrl(blog.imageUrl)}
                   useOptimizedLoading={true}
                 />

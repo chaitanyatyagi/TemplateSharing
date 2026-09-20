@@ -6,17 +6,17 @@ const templateController = require("../controller/templateController");
 
 router.post(
   "/get-one/:templateId",
-  authController.gAuth,
+  authController.optionalAuth,
   templateController.getTemplateById
 );
 router.post(
   "/get-all",
-  authController.gAuth,
+  authController.optionalAuth,
   templateController.getAllTemplates
 );
 router.post(
   "/get-all-by-category",
-  authController.gAuth,
+  authController.optionalAuth,
   templateController.getAllTemplatesByCategory
 );
 router.post(
