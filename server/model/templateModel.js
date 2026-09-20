@@ -23,7 +23,13 @@ const templateSchema = new mongoose.Schema({
     template_description:String,
     template_tags:[String],
     template_category:String,
-    template_subcategory:String
+    template_subcategory:String,
+    // Publish state. Drafts are visible to admins only, never in public listings.
+    status:{
+        type:String,
+        enum:["draft","published"],
+        default:"published"
+    }
 }, { timestamps: true })
 
 const Template = mongoose.model("Template",templateSchema)

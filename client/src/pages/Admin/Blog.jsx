@@ -16,15 +16,15 @@ const Blog = () => {
       const response = await BlogService.getAllBlogs(1, 100);
 
       if (response.status === "Success") {
-        const cols = ["S.NO", "BLOG HEADING", "CATEGORIES", "VIEWS", "LIKES", "ACTIONS"];
+        const cols = ["S.NO", "BLOG HEADING", "CATEGORIES", "LIKES", "STATUS", "ACTIONS"];
 
         const blogData = response.blogs.map((blog, index) => ({
           "S.NO": index + 1,
           "BLOG ID": blog._id,
           "BLOG HEADING": blog.name,
           CATEGORIES: blog.type,
-          VIEWS: blog.viewsCount || 0,
           LIKES: blog.likesCount || 0,
+          STATUS: blog.status === "draft" ? "Draft" : "Published",
           ACTIONS: "Edit/Delete"
         }));
 
@@ -61,13 +61,29 @@ const Blog = () => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All category");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const categories = ["All category", "Technology", "Design", "Marketing", "AI"];
+  // Category options derived from the actual blogs.
+  const categories = [
+    "All category",
+    ...Array.from(new Set(data.map((row) => row.CATEGORIES).filter(Boolean))).sort(),
+  ];
 
   const handleSelect = (category) => {
     setSelectedCategory(category);
     setIsDropdownOpen(false);
   };
+
+  const filteredData = data.filter((row) => {
+    const matchesCategory =
+      selectedCategory === "All category" || row.CATEGORIES === selectedCategory;
+    const q = searchQuery.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      String(row["BLOG HEADING"] || "").toLowerCase().includes(q) ||
+      String(row.CATEGORIES || "").toLowerCase().includes(q);
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
@@ -142,7 +158,9 @@ const Blog = () => {
                   </svg>
                   <input
                     type="text"
-                    placeholder="Search templates..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search blogs..."
                     className="ml-2 w-full outline-none text-sm font-inter placeholder-gray-400"
                   />
                 </div>
@@ -160,7 +178,7 @@ const Blog = () => {
               {activeMenu === "Blog" && (
                 <Table
                   headers={headers}
-                  data={data}
+                  data={filteredData}
                   setActiveMenu={setActiveMenu}
                   activeMenu={"Add Blog"}
                   idKey="BLOG ID"

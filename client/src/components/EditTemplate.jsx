@@ -6,8 +6,6 @@ import { getTemplateImageUrl } from "../utils/assetUrl";
 const initialFormData = {
   name: "",
   card_content: "",
-  template_title: "",
-  template_url: "",
   template_link: "",
   template_type: "paid",
   price: "",
@@ -16,6 +14,7 @@ const initialFormData = {
   template_tags: "",
   template_category: "",
   template_subcategory: "",
+  status: "published",
 };
 
 const EditTemplate = ({ setActiveMenu }) => {
@@ -48,8 +47,6 @@ const EditTemplate = ({ setActiveMenu }) => {
           setFormData({
             name: t.name || "",
             card_content: t.card_content || "",
-            template_title: t.template_title || "",
-            template_url: t.template_url || "",
             template_link: t.template_link || "",
             template_type: t.template_type || "paid",
             price: t.price ?? "",
@@ -58,6 +55,7 @@ const EditTemplate = ({ setActiveMenu }) => {
             template_tags: (t.template_tags || []).join(", "),
             template_category: t.template_category || "",
             template_subcategory: t.template_subcategory || "",
+            status: t.status || "published",
           });
           setCardImagePreview(getTemplateImageUrl(t.card_image));
           setCurrentFileName(t.template_file_original || "");
@@ -81,8 +79,14 @@ const EditTemplate = ({ setActiveMenu }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const next = { ...prev, [name]: value };
+      if (name === "template_type" && value === "free") next.price = "0";
+      return next;
+    });
   };
+
+  const isFree = formData.template_type === "free";
 
   const handleTemplateFileSelect = (e) => {
     const file = e.target.files[0];
@@ -91,11 +95,9 @@ const EditTemplate = ({ setActiveMenu }) => {
 
   const handleCancel = () => setActiveMenu("Template");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.name.trim() || !formData.template_title.trim() || formData.price === "") {
-      setError("Please fill in all required fields");
+  const handleSubmit = async (status) => {
+    if (!formData.name.trim()) {
+      setError("Please enter a title");
       return;
     }
 
@@ -104,13 +106,16 @@ const EditTemplate = ({ setActiveMenu }) => {
       setError(null);
       setSuccess(null);
 
-      const payload = templateFile
-        ? { ...formData, template_file: templateFile }
-        : formData;
+      const base = {
+        ...formData,
+        status,
+        price: isFree ? 0 : formData.price,
+      };
+      const payload = templateFile ? { ...base, template_file: templateFile } : base;
       const response = await TemplateService.updateTemplate(templateId, payload);
 
       if (response.status === "Success") {
-        setSuccess("Template updated successfully!");
+        setSuccess(status === "draft" ? "Saved as draft!" : "Template published!");
         setTimeout(() => setActiveMenu("Template"), 1500);
       } else {
         setError(response.message || "Failed to update template");
@@ -148,14 +153,23 @@ const EditTemplate = ({ setActiveMenu }) => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            type="submit"
-            className="flex items-center gap-2 bg-white text-bluePrimary px-3 py-1.5 rounded-md hover:bg-lightBlue transition"
-            onClick={handleSubmit}
+            type="button"
+            className="flex items-center gap-2 bg-white/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-white/20 transition"
+            onClick={() => handleSubmit("draft")}
             disabled={loading}
           >
-            <CheckCircle2 size={16} /> <span>{loading ? "Updating..." : "Update"}</span>
+            <FileText size={16} /> <span>{loading ? "Saving..." : "Save as Draft"}</span>
           </button>
           <button
+            type="button"
+            className="flex items-center gap-2 bg-white text-bluePrimary px-3 py-1.5 rounded-md hover:bg-lightBlue transition"
+            onClick={() => handleSubmit("published")}
+            disabled={loading}
+          >
+            <CheckCircle2 size={16} /> <span>{loading ? "Saving..." : "Publish"}</span>
+          </button>
+          <button
+            type="button"
             className="flex items-center gap-2 bg-white text-red-500 px-3 py-1.5 rounded-md hover:bg-red-50 transition"
             onClick={handleCancel}
             disabled={loading}
@@ -172,31 +186,18 @@ const EditTemplate = ({ setActiveMenu }) => {
         <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-6 mt-6 bg-white rounded-lg shadow-sm border border-border p-6">
+      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col lg:flex-row gap-6 mt-6 bg-white rounded-lg shadow-sm border border-border p-6">
         <div className="flex-1 flex flex-col gap-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Card Title</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Full Title</label>
-              <input
-                type="text"
-                name="template_title"
-                value={formData.template_title}
-                onChange={handleInputChange}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-textDark font-semibold">Title</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+              required
+            />
           </div>
 
           <div className="flex flex-col gap-2">
@@ -211,7 +212,7 @@ const EditTemplate = ({ setActiveMenu }) => {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-textDark font-semibold">Type</label>
               <select
@@ -231,22 +232,14 @@ const EditTemplate = ({ setActiveMenu }) => {
                 type="number"
                 name="price"
                 min="0"
-                value={formData.price}
+                value={isFree ? 0 : formData.price}
                 onChange={handleInputChange}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
+                disabled={isFree}
+                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary disabled:opacity-60 disabled:cursor-not-allowed"
               />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Preview URL</label>
-              <input
-                type="text"
-                name="template_url"
-                value={formData.template_url}
-                onChange={handleInputChange}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
-              />
+              {isFree && (
+                <p className="text-xs text-grayLight">Free templates are automatically priced ₹0.</p>
+              )}
             </div>
           </div>
 

@@ -5,8 +5,6 @@ import TemplateService from "../api/template";
 const initialFormData = {
   name: "",
   card_content: "",
-  template_title: "",
-  template_url: "",
   template_link: "",
   template_type: "paid",
   price: "",
@@ -28,8 +26,15 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const next = { ...prev, [name]: value };
+      // Free templates are always ₹0 — clear/lock the price automatically.
+      if (name === "template_type" && value === "free") next.price = "0";
+      return next;
+    });
   };
+
+  const isFree = formData.template_type === "free";
 
   const handleCardImageSelect = (e) => {
     const file = e.target.files[0];
@@ -64,38 +69,40 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
     setActiveMenu(activeMenu);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (status) => {
+    // A draft only needs a title; everything else can be filled in later.
+    if (!formData.name?.trim()) {
+      setError("Please enter a title");
+      return;
+    }
 
-    const requiredTextFields = [
-      "name",
-      "card_content",
-      "template_title",
-      "template_url",
-      "template_type",
-      "template_content",
-      "template_description",
-      "template_tags",
-      "template_category",
-      "template_subcategory",
-    ];
-    const missing = requiredTextFields.filter((field) => !formData[field]?.trim());
-
-    if (missing.length > 0 || formData.price === "") {
-      setError("Please fill in all required fields");
-      return;
-    }
-    if (!cardImage) {
-      setError("Please upload a card image");
-      return;
-    }
-    if (templateImages.length === 0) {
-      setError("Please upload at least one template image");
-      return;
-    }
-    if (!templateFile && !formData.template_link?.trim()) {
-      setError("Add the deliverable: upload a template file or provide a download link");
-      return;
+    if (status === "published") {
+      const requiredTextFields = [
+        "card_content",
+        "template_type",
+        "template_content",
+        "template_description",
+        "template_tags",
+        "template_category",
+        "template_subcategory",
+      ];
+      const missing = requiredTextFields.filter((field) => !formData[field]?.trim());
+      if (missing.length > 0 || (!isFree && formData.price === "")) {
+        setError("Please fill in all required fields to publish (or save as draft instead)");
+        return;
+      }
+      if (!cardImage) {
+        setError("Please upload a card image to publish");
+        return;
+      }
+      if (templateImages.length === 0) {
+        setError("Please upload at least one template image to publish");
+        return;
+      }
+      if (!templateFile && !formData.template_link?.trim()) {
+        setError("Add the deliverable: upload a template file or provide a download link");
+        return;
+      }
     }
 
     try {
@@ -105,21 +112,23 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
 
       const response = await TemplateService.createTemplate({
         ...formData,
+        price: isFree ? 0 : formData.price,
+        status,
         card_image: cardImage,
         template_images: templateImages,
         template_file: templateFile,
       });
 
       if (response.status === "Success") {
-        setSuccess("Template created successfully!");
+        setSuccess(status === "draft" ? "Draft saved!" : "Template published!");
         resetForm();
         setTimeout(() => setActiveMenu(activeMenu), 1500);
       } else {
-        setError(response.message || "Failed to create template");
+        setError(response.message || "Failed to save template");
       }
     } catch (err) {
       console.error("Error creating template:", err);
-      setError(err.message || "Failed to create template");
+      setError(err.message || "Failed to save template");
     } finally {
       setLoading(false);
     }
@@ -141,14 +150,23 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            type="submit"
-            className="flex items-center gap-2 bg-white text-bluePrimary px-3 py-1.5 rounded-md hover:bg-lightBlue transition"
-            onClick={handleSubmit}
+            type="button"
+            className="flex items-center gap-2 bg-white/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-white/20 transition"
+            onClick={() => handleSubmit("draft")}
             disabled={loading}
           >
-            <CheckCircle2 size={16} /> <span>{loading ? "Adding..." : "Add"}</span>
+            <FileText size={16} /> <span>{loading ? "Saving..." : "Save as Draft"}</span>
           </button>
           <button
+            type="button"
+            className="flex items-center gap-2 bg-white text-bluePrimary px-3 py-1.5 rounded-md hover:bg-lightBlue transition"
+            onClick={() => handleSubmit("published")}
+            disabled={loading}
+          >
+            <CheckCircle2 size={16} /> <span>{loading ? "Publishing..." : "Publish"}</span>
+          </button>
+          <button
+            type="button"
             className="flex items-center gap-2 bg-white text-red-500 px-3 py-1.5 rounded-md hover:bg-red-50 transition"
             onClick={handleCancel}
             disabled={loading}
@@ -165,34 +183,20 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
         <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-6 mt-6 bg-white rounded-lg shadow-sm border border-border p-6">
+      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col lg:flex-row gap-6 mt-6 bg-white rounded-lg shadow-sm border border-border p-6">
         {/* Left Section */}
         <div className="flex-1 flex flex-col gap-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Card Title</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                placeholder="Shown on the template card"
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Full Title</label>
-              <input
-                type="text"
-                name="template_title"
-                value={formData.template_title}
-                onChange={handleInputChange}
-                placeholder="Shown on the detail page"
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-textDark font-semibold">Title</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="Template title (shown on the card and detail page)"
+              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+              required
+            />
           </div>
 
           <div className="flex flex-col gap-2">
@@ -208,7 +212,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-textDark font-semibold">Type</label>
               <select
@@ -228,24 +232,15 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
                 type="number"
                 name="price"
                 min="0"
-                value={formData.price}
+                value={isFree ? 0 : formData.price}
                 onChange={handleInputChange}
-                placeholder={formData.template_type === "free" ? "0" : "Enter price"}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
+                disabled={isFree}
+                placeholder={isFree ? "Free" : "Enter price"}
+                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary disabled:opacity-60 disabled:cursor-not-allowed"
               />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Preview URL</label>
-              <input
-                type="text"
-                name="template_url"
-                value={formData.template_url}
-                onChange={handleInputChange}
-                placeholder="https://..."
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-                required
-              />
+              {isFree && (
+                <p className="text-xs text-grayLight">Free templates are automatically priced ₹0.</p>
+              )}
             </div>
           </div>
 

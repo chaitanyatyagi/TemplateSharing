@@ -46,8 +46,9 @@ const BlogService = {
 
       // Append text fields
       formData.append("name", blogData.name);
-      formData.append("content", blogData.content);
-      formData.append("type", blogData.type);
+      formData.append("content", blogData.content ?? "");
+      formData.append("type", blogData.type ?? "");
+      if (blogData.status) formData.append("status", blogData.status);
 
       // Append image if provided
       if (blogData.image) {
@@ -58,6 +59,7 @@ const BlogService = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        timeout: 120000,
       });
 
       return response.data;
@@ -72,9 +74,10 @@ const BlogService = {
       const formData = new FormData();
 
       // Append text fields
-      if (blogData.name) formData.append("name", blogData.name);
-      if (blogData.content) formData.append("content", blogData.content);
+      if (blogData.name !== undefined) formData.append("name", blogData.name);
+      if (blogData.content !== undefined) formData.append("content", blogData.content);
       if (blogData.type) formData.append("type", blogData.type);
+      if (blogData.status) formData.append("status", blogData.status);
 
       // Append image if provided
       if (blogData.image) {
@@ -85,8 +88,19 @@ const BlogService = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        timeout: 120000,
       });
 
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Toggle like for a blog (any logged-in user). Returns { liked, likesCount }.
+  toggleLike: async (blogId) => {
+    try {
+      const response = await apiClient.post(`/blog/like/${blogId}`);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));

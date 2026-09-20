@@ -41,6 +41,13 @@ router.delete(
   blogController.deleteBlog
 );
 
+// Public like toggle (any logged-in user)
+router.post(
+  "/like/:blogId",
+  authController.gAuth,
+  blogController.toggleLike
+);
+
 // Image streaming endpoint
 router.get(
   "/stream/:filename",

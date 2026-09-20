@@ -6,7 +6,7 @@ import { googleSignup } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import MainLogo from "../../assets/main-logo.png";
+import MainLogo from "../../assets/main-logo-user.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const Login = () => {
             <img
               src={MainLogo}
               alt="Main Logo"
-              className="h-[40px] w-[200px] mb-4"
+              className="h-[40px] w-auto mb-4"
             />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
             <p className="text-gray-600 text-center">Sign in to access your account and continue your productivity journey</p>

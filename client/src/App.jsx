@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import LoginPromoPopup from "./components/LoginPromoPopup";
 import Home from "./pages/User/Home";
 import Admin from "./pages/Admin/Admin";
 import Login from "./pages/User/Login";
@@ -49,6 +50,7 @@ function App() {
                   </ProtectedRoute>
                 } />
               </Routes>
+              <LoginPromoPopup />
               {/* <Footer /> */}
             </div>
             </CartProvider>

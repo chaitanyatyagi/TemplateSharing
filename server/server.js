@@ -90,6 +90,28 @@ app.all("/*path", (req, res) => {
   });
 });
 
+// Global error handler — ensures every failure (including multer upload errors)
+// returns a JSON body with a message, instead of Express's default HTML page
+// (which surfaced on the client as a generic "Request failed").
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+
+  let status = err.status || 500;
+  let message = err.message || "Something went wrong on the server.";
+
+  // Friendlier messages for common multer upload errors.
+  if (err.code === "LIMIT_FILE_SIZE") {
+    status = 413;
+    message = "File too large. Please upload a smaller file.";
+  } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+    status = 400;
+    message = `Unexpected file field: ${err.field || "unknown"}.`;
+  }
+
+  res.status(status).json({ status: "Error", message });
+});
+
 // Bind to loopback only: the API is reached through the nginx reverse proxy in
 // production (and via localhost in dev), so it must not be exposed on the public
 // interface. Mirrors how the other services on the host bind.

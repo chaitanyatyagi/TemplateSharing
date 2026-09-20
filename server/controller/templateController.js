@@ -97,6 +97,10 @@ exports.resizeImages = async (req, res, next) => {
 exports.getTemplateById = async (req, res) => {
   try {
     const template = await Template.findById(req.params.templateId);
+    // Drafts are only visible to admins.
+    if (template && template.status === "draft" && req.role !== "admin") {
+      return res.status(404).json({ status: "Error", message: "Template not found" });
+    }
     return res.status(200).json({
       status: "Success",
       template,
@@ -114,7 +118,9 @@ exports.getTemplateById = async (req, res) => {
 
 exports.getAllTemplates = async (req, res) => {
   try {
-    const templates = await Template.find();
+    // Non-admins never see drafts.
+    const filter = req.role === "admin" ? {} : { status: { $ne: "draft" } };
+    const templates = await Template.find(filter);
     return res.status(200).json({
       status: "Success",
       templates,
@@ -132,9 +138,10 @@ exports.getAllTemplates = async (req, res) => {
 
 exports.getAllTemplatesByCategory = async (req, res) => {
   try {
-    const templates = await Template.find({
-      template_category: req.body.template_category,
-    });
+    const filter = { template_category: req.body.template_category };
+    // Non-admins never see drafts.
+    if (req.role !== "admin") filter.status = { $ne: "draft" };
+    const templates = await Template.find(filter);
     return res.status(200).json({
       status: "Success",
       templates,
@@ -191,23 +198,35 @@ exports.createTemplate = async (req, res) => {
       template_category,
       template_subcategory,
       template_link,
+      status,
     } = req.body;
 
-    // Check for missing fields
+    // Single "Title" from the admin form: `name` is the source of truth and also
+    // fills template_title (detail-page heading), so there's no duplicate field.
+    const title = name || template_title;
+    const publishState = status === "draft" ? "draft" : "published";
+
+    // Free templates are always priced 0; paid templates use the entered price.
+    const finalPrice = template_type === "free" ? 0 : Number(price);
+
+    // Drafts can be saved incomplete; only a title is required. Published
+    // templates must have the full set of fields. (Preview URL is no longer required.)
     const missingFields = [];
-    if (!name) missingFields.push("name");
-    if (!card_image) missingFields.push("card_image");
-    if (!card_content) missingFields.push("card_content");
-    if (!template_images.length) missingFields.push("template_images");
-    if (!template_title) missingFields.push("template_title");
-    if (!template_url) missingFields.push("template_url");
-    if (!template_type) missingFields.push("template_type");
-    if (price === undefined || price === null || price === "") missingFields.push("price");
-    if (!template_content) missingFields.push("template_content");
-    if (!template_description) missingFields.push("template_description");
-    if (!template_tags) missingFields.push("template_tags");
-    if (!template_category) missingFields.push("template_category");
-    if (!template_subcategory) missingFields.push("template_subcategory");
+    if (!title) missingFields.push("title");
+    if (publishState === "published") {
+      if (!card_image) missingFields.push("card_image");
+      if (!card_content) missingFields.push("card_content");
+      if (!template_images.length) missingFields.push("template_images");
+      if (!template_type) missingFields.push("template_type");
+      if (template_type !== "free" && (price === undefined || price === null || price === "")) {
+        missingFields.push("price");
+      }
+      if (!template_content) missingFields.push("template_content");
+      if (!template_description) missingFields.push("template_description");
+      if (!template_tags) missingFields.push("template_tags");
+      if (!template_category) missingFields.push("template_category");
+      if (!template_subcategory) missingFields.push("template_subcategory");
+    }
 
     if (missingFields.length > 0) {
       return res.status(400).json({
@@ -219,28 +238,29 @@ exports.createTemplate = async (req, res) => {
     }
     const parsedTags = Array.isArray(template_tags)
       ? template_tags
-      : String(template_tags)
+      : String(template_tags || "")
           .split(",")
           .map((tag) => tag.trim())
           .filter(Boolean);
 
     const body = {
-      name,
+      name: title,
       card_image,
       card_content,
       template_images,
-      template_title,
-      template_url,
+      template_title: title,
+      template_url: template_url || "",
       template_file,
       template_file_original,
       template_link: template_link || "",
-      template_type,
-      price,
+      template_type: template_type || "paid",
+      price: Number.isFinite(finalPrice) ? finalPrice : 0,
       template_content,
       template_description,
       template_tags: parsedTags,
       template_category,
       template_subcategory,
+      status: publishState,
     };
     const newTemplate = await Template.create(body);
     return res.status(201).json({
@@ -269,6 +289,17 @@ exports.updateTemplate = async (req, res) => {
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean);
+    }
+
+    // Keep the single-title model in sync: name also drives template_title.
+    if (updateData.name !== undefined) {
+      updateData.template_title = updateData.name;
+    }
+    // Free templates are always priced 0.
+    if (updateData.template_type === "free") {
+      updateData.price = 0;
+    } else if (updateData.price !== undefined && updateData.price !== "") {
+      updateData.price = Number(updateData.price);
     }
 
     // Replace the deliverable file if a new one was uploaded.

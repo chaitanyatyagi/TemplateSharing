@@ -16,15 +16,16 @@ const Template = () => {
       const response = await TemplateService.getAllTemplates();
 
       if (response.status === "Success") {
-        const cols = ["S.NO", "TEMPLATE HEADING", "CATEGORIES", "PRICE", "TYPE", "ACTIONS"];
+        const cols = ["S.NO", "TEMPLATE HEADING", "CATEGORIES", "PRICE", "TYPE", "STATUS", "ACTIONS"];
 
         const templateData = response.templates.map((template, index) => ({
           "S.NO": index + 1,
           "TEMPLATE ID": template._id,
           "TEMPLATE HEADING": template.name,
-          CATEGORIES: template.template_category,
+          CATEGORIES: template.template_category || "—",
           PRICE: template.template_type === "free" ? "Free" : `Rs ${template.price}`,
           TYPE: template.template_type,
+          STATUS: template.status === "draft" ? "Draft" : "Published",
           ACTIONS: "Edit/Delete",
         }));
 
@@ -61,13 +62,32 @@ const Template = () => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All category");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const categories = ["All category", "Technology", "Design", "Marketing", "AI"];
+  // Category options derived from the actual templates (not a hardcoded list).
+  const categories = [
+    "All category",
+    ...Array.from(
+      new Set(data.map((row) => row.CATEGORIES).filter((c) => c && c !== "—"))
+    ).sort(),
+  ];
 
   const handleSelect = (category) => {
     setSelectedCategory(category);
     setIsDropdownOpen(false);
   };
+
+  // Apply category filter + text search over heading/category.
+  const filteredData = data.filter((row) => {
+    const matchesCategory =
+      selectedCategory === "All category" || row.CATEGORIES === selectedCategory;
+    const q = searchQuery.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      String(row["TEMPLATE HEADING"] || "").toLowerCase().includes(q) ||
+      String(row.CATEGORIES || "").toLowerCase().includes(q);
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
@@ -142,6 +162,8 @@ const Template = () => {
                   </svg>
                   <input
                     type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search templates..."
                     className="ml-2 w-full outline-none text-sm font-inter placeholder-gray-400"
                   />
@@ -160,7 +182,7 @@ const Template = () => {
               {activeMenu === "Template" && (
                 <Table
                   headers={headers}
-                  data={data}
+                  data={filteredData}
                   setActiveMenu={setActiveMenu}
                   activeMenu={"Add Template"}
                   idKey="TEMPLATE ID"

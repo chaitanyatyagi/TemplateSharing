@@ -2,15 +2,19 @@ import { useState, useEffect } from "react";
 import { Heart, Bookmark } from "lucide-react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
+import BlogContent from "../../components/BlogContent";
 import BlogService from "../../api/blog";
 import { getServerAssetUrl } from "../../utils/assetUrl";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useAuth } from "../../context/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 
 const BlogIndividual = () => {
   const { blogId } = useParams();
   const navigate = useNavigate();
   const { isSaved, toggleSaved } = useFavorites();
+  const { isAuthenticated } = useAuth();
+  const [likeBusy, setLikeBusy] = useState(false);
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,8 +34,8 @@ const BlogIndividual = () => {
 
         if (response.status === "Success") {
           setBlog(response.blog);
-          // Set default likes count if not provided
           setLikesCount(response.blog.likesCount || 0);
+          setLiked(Boolean(response.blog.likedByMe));
         } else {
           setError(response.message || "Failed to fetch blog");
         }
@@ -49,13 +53,36 @@ const BlogIndividual = () => {
   }, [blogId]);
 
   const handleLike = async () => {
-    const newLiked = !liked;
-    setLiked(newLiked);
-    setLikesCount(prev => (newLiked ? prev + 1 : prev - 1));
+    if (!isAuthenticated()) {
+      navigate("/login");
+      return;
+    }
+    if (likeBusy) return;
 
-    // Simulate backend delay
-    await new Promise(resolve => setTimeout(resolve, 400));
-    console.log(`Mock Like Action: Blog ${newLiked ? "Liked" : "Unliked"}`);
+    // Optimistic update, reconciled with the server response.
+    const prevLiked = liked;
+    const prevCount = likesCount;
+    const nextLiked = !prevLiked;
+    setLiked(nextLiked);
+    setLikesCount((c) => (nextLiked ? c + 1 : Math.max(0, c - 1)));
+
+    try {
+      setLikeBusy(true);
+      const res = await BlogService.toggleLike(blogId);
+      if (res.status === "Success") {
+        setLiked(res.liked);
+        setLikesCount(res.likesCount);
+      } else {
+        setLiked(prevLiked);
+        setLikesCount(prevCount);
+      }
+    } catch (err) {
+      console.error("Like error:", err);
+      setLiked(prevLiked);
+      setLikesCount(prevCount);
+    } finally {
+      setLikeBusy(false);
+    }
   };
 
   const handleSave = () => {
@@ -173,10 +200,8 @@ const BlogIndividual = () => {
           </div>
         </div>
 
-        {/* Blog Content */}
-        <p className="font-inter text-base sm:text-lg text-textMuted leading-relaxed whitespace-pre-line">
-          {blog.content}
-        </p>
+        {/* Blog Content (rich HTML) */}
+        <BlogContent html={blog.content} />
 
         {/* Blog Category */}
         <div className="mt-4">

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import ProfileAvatar from "../utils/ProfileAvatar";
 import Notification from "../assets/notification.png";
-import MainLogo from "../assets/main-logo.png";
+import MainLogo from "../assets/main-logo-user.png";
 import Cart from "../assets/cart.svg";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -43,7 +43,7 @@ const Navbar = () => {
         <img
           src={MainLogo}
           alt="Main Logo"
-          className="h-[30px] w-[180px] sm:h-[35px] sm:w-[230px] cursor-pointer"
+          className="h-[30px] sm:h-[35px] w-auto cursor-pointer"
           onClick={() => navigate("/")}
         />
       </div>

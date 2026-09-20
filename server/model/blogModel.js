@@ -17,13 +17,32 @@ const blogSchema = new mongoose.Schema({
     },
     content: {
         type: String,
-        required: true
+        default: ""
     },
     type: {
         type: String,
         required: true,
         enum: ["technology", "business", "health", "lifestyle", "education", "entertainment"],
         default: "technology"
+    },
+    // Publish state. Drafts are visible to admins only, never in public listings.
+    status: {
+        type: String,
+        enum: ["draft", "published"],
+        default: "published"
+    },
+    // Public likes: userIds that liked this blog + a denormalized count for lists.
+    likes: {
+        type: [String],
+        default: []
+    },
+    likesCount: {
+        type: Number,
+        default: 0
+    },
+    viewsCount: {
+        type: Number,
+        default: 0
     },
     createdAt: {
         type: Date,

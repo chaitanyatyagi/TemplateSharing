@@ -13,7 +13,11 @@ const TEXT_FIELDS = [
   "template_tags",
   "template_category",
   "template_subcategory",
+  "status",
 ];
+
+// Uploads (images + deliverable) can take longer than the default 10s timeout.
+const UPLOAD_TIMEOUT = 120000;
 
 // Template API Service
 const TemplateService = {
@@ -74,6 +78,7 @@ const TemplateService = {
 
       const response = await apiClient.post("/template/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        timeout: UPLOAD_TIMEOUT,
       });
 
       return response.data;
@@ -100,7 +105,7 @@ const TemplateService = {
         const response = await apiClient.patch(
           `/template/update/${templateId}`,
           formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          { headers: { "Content-Type": "multipart/form-data" }, timeout: UPLOAD_TIMEOUT }
         );
         return response.data;
       }

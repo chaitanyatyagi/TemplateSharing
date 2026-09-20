@@ -175,9 +175,15 @@ exports.getBlogById = async (req, res) => {
       });
     }
 
-    // Enhance with optimized image URLs
+    // Drafts are only visible to admins.
+    if (blog.status === "draft" && req.role !== "admin") {
+      return res.status(404).json({ status: "Error", message: "Blog not found" });
+    }
+
+    // Enhance with optimized image URLs + per-user like state.
     const optimizedBlog = {
       ...blog._doc,
+      likedByMe: req.userId ? (blog.likes || []).includes(req.userId) : false,
       imageUrls: {
         thumbnail: `/api/blog/stream/${blog.image}-thumbnail.webp`,
         medium: `/api/blog/stream/${blog.image}-medium.webp`,
@@ -207,6 +213,8 @@ exports.getAllBlogs = async (req, res) => {
     const { page = 1, limit = 10, category } = req.query;
 
     const query = category ? { type: category } : {};
+    // Non-admins never see drafts.
+    if (req.role !== "admin") query.status = { $ne: "draft" };
 
     const blogs = await Blog.find(query)
       .sort({ createdAt: -1 })
@@ -255,12 +263,16 @@ exports.getAllBlogsByCategory = async (req, res) => {
       });
     }
 
-    const blogs = await Blog.find({ type: category })
+    const categoryQuery = { type: category };
+    // Non-admins never see drafts.
+    if (req.role !== "admin") categoryQuery.status = { $ne: "draft" };
+
+    const blogs = await Blog.find(categoryQuery)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
 
-    const total = await Blog.countDocuments({ type: category });
+    const total = await Blog.countDocuments(categoryQuery);
 
     // Enhance with optimized thumbnail URLs
     const optimizedBlogs = blogs.map((blog) => ({
@@ -300,15 +312,18 @@ exports.createBlog = async (req, res) => {
       });
     }
 
-    const { name, content, type } = req.body;
+    const { name, content, type, status } = req.body;
+    const publishState = status === "draft" ? "draft" : "published";
 
-    // Validate required fields
-    if (!name || !content || !type) {
-      const missingFields = [];
-      if (!name) missingFields.push("name");
+    // Drafts can be saved incomplete (only a title required); published blogs
+    // must have content and a category.
+    const missingFields = [];
+    if (!name) missingFields.push("name");
+    if (publishState === "published") {
       if (!content) missingFields.push("content");
       if (!type) missingFields.push("type");
-
+    }
+    if (missingFields.length > 0) {
       return res.status(400).json({
         status: "Error",
         message: `Missing required fields: ${missingFields.join(", ")}`,
@@ -321,8 +336,9 @@ exports.createBlog = async (req, res) => {
     const blogData = {
       blogId,
       name,
-      content,
-      type,
+      content: content || "",
+      type: type || "technology",
+      status: publishState,
       image: req.body.image || "", // Image filename from processing
     };
 
@@ -360,6 +376,13 @@ exports.updateBlog = async (req, res) => {
     if (!req.file) {
       delete updateData.image;
     }
+    // Never overwrite a category with an empty value (would fail the enum).
+    if (updateData.type === "" || updateData.type === undefined) {
+      delete updateData.type;
+    }
+    // Likes are managed only through the like endpoint.
+    delete updateData.likes;
+    delete updateData.likesCount;
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       blogId,
@@ -388,6 +411,38 @@ exports.updateBlog = async (req, res) => {
       status: "Error",
       message: error.message,
     });
+  }
+};
+
+// Public like toggle. Keyed by the logged-in user's id so each user counts once.
+exports.toggleLike = async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.blogId);
+    if (!blog) {
+      return res.status(404).json({ status: "Error", message: "Blog not found" });
+    }
+
+    const uid = req.userId;
+    const idx = (blog.likes || []).indexOf(uid);
+    let liked;
+    if (idx > -1) {
+      blog.likes.splice(idx, 1);
+      liked = false;
+    } else {
+      blog.likes.push(uid);
+      liked = true;
+    }
+    blog.likesCount = blog.likes.length;
+    await blog.save();
+
+    return res.status(200).json({
+      status: "Success",
+      liked,
+      likesCount: blog.likesCount,
+    });
+  } catch (error) {
+    console.error("Toggle like error:", error);
+    return res.status(500).json({ status: "Error", message: error.message });
   }
 };
 

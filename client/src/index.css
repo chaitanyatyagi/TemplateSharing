@@ -6,3 +6,21 @@
 @tailwind utilities;
 
 
+
+/* ---- Rich blog content (rendered from the editor's HTML) ---- */
+.blog-content { color: #414A5A; line-height: 1.75; font-size: 1rem; }
+.blog-content h1 { font-size: 1.75rem; font-weight: 700; color: #1F2937; margin: 1.25rem 0 0.75rem; }
+.blog-content h2 { font-size: 1.4rem; font-weight: 700; color: #1F2937; margin: 1.1rem 0 0.6rem; }
+.blog-content h3 { font-size: 1.15rem; font-weight: 600; color: #1F2937; margin: 1rem 0 0.5rem; }
+.blog-content p { margin: 0.6rem 0; }
+.blog-content a { color: #2563EB; text-decoration: underline; }
+.blog-content ul { list-style: disc; padding-left: 1.5rem; margin: 0.6rem 0; }
+.blog-content ol { list-style: decimal; padding-left: 1.5rem; margin: 0.6rem 0; }
+.blog-content blockquote { border-left: 4px solid #DEE6FF; padding-left: 1rem; color: #606060; font-style: italic; margin: 0.8rem 0; }
+.blog-content pre, .blog-content code { background: #F3F4F6; border-radius: 6px; }
+.blog-content pre { padding: 0.75rem 1rem; overflow-x: auto; }
+.blog-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 0.75rem 0; }
+
+/* Give the rich-text editor a comfortable authoring height */
+.rich-editor .ql-container { min-height: 240px; font-family: inherit; font-size: 1rem; }
+.rich-editor .ql-editor { min-height: 240px; }
