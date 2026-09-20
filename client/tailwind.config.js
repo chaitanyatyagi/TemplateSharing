@@ -39,11 +39,13 @@ export default {
       },
       fontFamily: {
         inter: ["Inter", "sans-serif"],
+        // Make Inter the default font everywhere for a cohesive, modern look.
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       fontWeight: {
-        regular: "200",
-        semi: "400",
-        bold: "500",
+        regular: "400",
+        semi: "600",
+        bold: "700",
       },
     },
   },

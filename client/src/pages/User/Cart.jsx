@@ -53,10 +53,63 @@ const Cart = () => {
       .catch((err) => console.error("Could not prefill profile:", err));
   }, [user]);
 
-  const tax = subtotal * 0.18; // 18% GST
-  const total = subtotal + tax;
+  // Total charged equals the item subtotal (matches the server's authoritative amount).
+  const total = subtotal;
 
   const handleBillingChange = (e) => setBilling((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const openRazorpay = (order, rzp) => {
+    if (!window.Razorpay) {
+      setError("Payment library failed to load. Please refresh and try again.");
+      return;
+    }
+    const options = {
+      key: rzp.keyId,
+      amount: rzp.amount,
+      currency: rzp.currency,
+      name: "SmartTemp",
+      description: `Order ${order.orderId}`,
+      order_id: rzp.orderId,
+      prefill: { name: billing.userName, email: billing.userEmail, contact: billing.userPhone },
+      theme: { color: "#2563EB" },
+      handler: async (rp) => {
+        try {
+          setPlacing(true);
+          setError(null);
+          const verifyRes = await OrderService.verifyPayment({
+            orderId: order._id,
+            razorpay_order_id: rp.razorpay_order_id,
+            razorpay_payment_id: rp.razorpay_payment_id,
+            razorpay_signature: rp.razorpay_signature,
+          });
+          if (verifyRes.status === "Success") {
+            clear();
+            setStep("success");
+          } else {
+            setError(verifyRes.message || "Payment verification failed. Check your profile for status.");
+          }
+        } catch (err) {
+          setError(err.message || "Payment verification failed. Check your profile for status.");
+        } finally {
+          setPlacing(false);
+        }
+      },
+      modal: {
+        ondismiss: async () => {
+          setPlacing(false);
+          try { await OrderService.markPaymentFailed(order._id); } catch { /* ignore */ }
+          setError("Payment cancelled — this order is saved as 'failed' in your profile. You can try again anytime.");
+        },
+      },
+    };
+    const rzpObject = new window.Razorpay(options);
+    rzpObject.on("payment.failed", async (resp) => {
+      setPlacing(false);
+      try { await OrderService.markPaymentFailed(order._id); } catch { /* ignore */ }
+      setError(resp?.error?.description || "Payment failed — saved as 'failed' in your profile. You can try again.");
+    });
+    rzpObject.open();
+  };
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
@@ -65,12 +118,19 @@ const Cart = () => {
       setError(null);
       const orderItems = items.map((item) => ({ templateId: item.templateId, quantity: item.quantity }));
       const response = await OrderService.createOrder(orderItems, billing);
-      if (response.status === "Success") {
+
+      if (response.status !== "Success") {
+        setError(response.message || "Failed to place order");
+        return;
+      }
+      // Free order — completed immediately, no gateway.
+      if (!response.requiresPayment) {
         clear();
         setStep("success");
-      } else {
-        setError(response.message || "Failed to place order");
+        return;
       }
+      // Paid order — open Razorpay; completion happens in the handler.
+      openRazorpay(response.order, response.razorpay);
     } catch (err) {
       console.error("Error placing order:", err);
       setError(err.message || "Failed to place order");
@@ -205,13 +265,9 @@ const Cart = () => {
                       <span>Subtotal</span>
                       <span>₹{subtotal.toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between text-textMuted text-sm">
-                      <span>Tax (18% GST)</span>
-                      <span>₹{tax.toFixed(2)}</span>
-                    </div>
                     <div className="border-t border-borderLight pt-3 flex justify-between text-lg font-bold text-textHeading">
                       <span>Total</span>
-                      <span className="text-bluePrimary">₹{total.toFixed(2)}</span>
+                      <span className="text-bluePrimary">{total <= 0 ? "Free" : `₹${total.toFixed(2)}`}</span>
                     </div>
                   </div>
 
@@ -247,11 +303,11 @@ const Cart = () => {
 
                   <div className="border-t border-borderLight pt-3 mt-1 flex justify-between text-lg font-bold text-textHeading">
                     <span>Total</span>
-                    <span className="text-bluePrimary">₹{total.toFixed(2)}</span>
+                    <span className="text-bluePrimary">{total <= 0 ? "Free" : `₹${total.toFixed(2)}`}</span>
                   </div>
 
                   <button type="submit" disabled={placing} className="w-full bg-bluePrimary hover:bg-blueHover text-white py-3 rounded-xl font-semibold transition-all shadow-sm hover:shadow-md disabled:opacity-50">
-                    {placing ? "Placing order..." : "Place order"}
+                    {placing ? "Processing..." : total <= 0 ? "Get it free" : `Pay ₹${total.toFixed(2)}`}
                   </button>
                   <button type="button" onClick={() => setStep("cart")} disabled={placing} className="w-full border border-border text-textMuted hover:bg-background py-3 rounded-xl font-semibold transition-all">
                     Back to cart

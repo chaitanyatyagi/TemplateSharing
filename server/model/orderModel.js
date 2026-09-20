@@ -26,9 +26,11 @@ const orderSchema = new mongoose.Schema({
     orderAmount:Number,
     paymentMethod:{
         type:String,
-        enum:["credit_card","debit_card","paypal"],
-        default:"credit_card"
+        enum:["credit_card","debit_card","paypal","razorpay","free"],
+        default:"razorpay"
     },
+    razorpayOrderId:String,
+    razorpayPaymentId:String,
     userEmail:String,
     userPhone:String,
     userName:String,

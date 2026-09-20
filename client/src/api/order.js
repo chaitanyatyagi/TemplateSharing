@@ -36,6 +36,26 @@ const OrderService = {
       throw new Error(handleApiError(error));
     }
   },
+
+  // Verify a Razorpay payment and complete the order
+  verifyPayment: async (payload) => {
+    try {
+      const response = await apiClient.post("/order/verify", payload);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  // Mark a pending order as failed (payment dismissed/errored)
+  markPaymentFailed: async (orderId) => {
+    try {
+      const response = await apiClient.post("/order/payment-failed", { orderId });
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
 };
 
 export default OrderService;

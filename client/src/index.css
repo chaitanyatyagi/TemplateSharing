@@ -24,3 +24,7 @@
 /* Give the rich-text editor a comfortable authoring height */
 .rich-editor .ql-container { min-height: 240px; font-family: inherit; font-size: 1rem; }
 .rich-editor .ql-editor { min-height: 240px; }
+
+/* Crisper type + comfortable base */
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { color: #414A5A; }
