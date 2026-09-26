@@ -47,7 +47,7 @@ const TemplateCard = ({
       {/* Image */}
       <div
         onClick={() => navigate(`/templates/${id}`)}
-        className="relative aspect-[4/3] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(135deg,#F2E4BC_0_9px,#ECDCAC_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
+        className="relative aspect-[4/3] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(135deg,#F2F2F4_0_9px,#E7E7EB_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
       >
         {image ? (
           <img
@@ -69,7 +69,7 @@ const TemplateCard = ({
           aria-label="Toggle wishlist"
           className="absolute right-2.5 top-2.5 w-10 h-10 rounded-full border border-line bg-cream flex items-center justify-center hover:scale-110 active:scale-90 transition-transform"
         >
-          <Heart size={17} fill={liked ? "#22396F" : "none"} color={liked ? "#22396F" : "#010736"} />
+          <Heart size={17} fill={liked ? "#FCA311" : "none"} color={liked ? "#FCA311" : "#14213D"} />
         </button>
       </div>
 

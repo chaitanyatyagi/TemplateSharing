@@ -109,7 +109,7 @@ const BlogIndividual = () => {
               <Heart size={17} fill={liked ? "#B3261E" : "none"} color={liked ? "#B3261E" : "currentColor"} />{likesCount}
             </button>
             <button onClick={handleSave} aria-label="Save" className="w-10 h-10 border border-line rounded-full flex items-center justify-center hover:border-ink active:scale-90 transition-all">
-              <Bookmark size={17} fill={saved ? "#010736" : "none"} color="#010736" />
+              <Bookmark size={17} fill={saved ? "#14213D" : "none"} color="#14213D" />
             </button>
           </div>
         </div>
