@@ -30,6 +30,22 @@ export default {
         darkBgHover: "#1F2937",
         border: "#B1B4BC",        // default border
         borderLight: "#E5E7EB",   // subtle border (inputs, dividers)
+
+        // ---- Editorial direction (user-facing) ----
+        cream: "#F5F1EA",          // page canvas
+        paper: "#FBF8F3",          // raised card surface
+        creamAlt: "#EDE7DD",       // hatch / subtle band
+        hatch: "#E7E0D4",          // hatch stripe 2
+        ink: "#1C1A17",            // near-black — primary text & buttons
+        inkSoft: "#3A352E",        // softer ink for long-form body
+        bodytext: "#4A443C",       // standard body copy
+        muted2: "#6B645A",         // muted labels / meta
+        faint: "#8A8276",          // faint placeholders / captions
+        line: "#D9D1C4",           // soft divider on cream
+        terracotta: "#B4532A",     // accent
+        terracottaLight: "#E08A63",// accent on dark
+        successGreen: "#2F7D4F",
+        likeRed: "#B3261E",
       },
       fontSize: {
         xl: "30px",
@@ -39,8 +55,11 @@ export default {
       },
       fontFamily: {
         inter: ["Inter", "sans-serif"],
-        // Make Inter the default font everywhere for a cohesive, modern look.
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Editorial type system
+        display: ["'Instrument Serif'", "ui-serif", "Georgia", "serif"],
+        mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
+        // Hanken Grotesk is the default UI/body font site-wide.
+        sans: ["'Hanken Grotesk'", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       fontWeight: {
         regular: "400",

@@ -1,11 +1,17 @@
 import { useState, useEffect } from "react";
-import { Sparkles, PackageOpen, AlertCircle } from "lucide-react";
+import { PackageOpen, AlertCircle } from "lucide-react";
 import Navbar from "../../components/Navbar";
-import Dropdown from "../../components/DropDown";
 import Footer from "../../components/Footer";
 import TemplateCard from "../../components/templateCard";
 import TemplateService from "../../api/template";
 import { getTemplateImageUrl } from "../../utils/assetUrl";
+
+const OPTIONS = [
+  { value: "all", label: "All" },
+  { value: "finance", label: "Finance" },
+  { value: "portfolio", label: "Portfolio" },
+  { value: "business", label: "Business" },
+];
 
 const Template = () => {
   const [category, setCategory] = useState("all");
@@ -13,117 +19,82 @@ const Template = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const options = [
-    { value: "all", label: "All Category" },
-    { value: "finance", label: "Finance" },
-    { value: "portfolio", label: "Portfolio" },
-    { value: "business", label: "Business" },
-  ];
-
   useEffect(() => {
-    const fetchTemplates = async () => {
+    const run = async () => {
       try {
-        setLoading(true);
-        setError(null);
-        const response =
-          category === "all"
-            ? await TemplateService.getAllTemplates()
-            : await TemplateService.getTemplatesByCategory(category);
-        if (response.status === "Success") {
-          setTemplates(response.templates || []);
-        } else {
-          setError(response.message || "Failed to fetch templates");
-        }
-      } catch (err) {
-        console.error("Error fetching templates:", err);
-        setError(err.message || "Failed to fetch templates");
-      } finally {
-        setLoading(false);
-      }
+        setLoading(true); setError(null);
+        const res = category === "all"
+          ? await TemplateService.getAllTemplates()
+          : await TemplateService.getTemplatesByCategory(category);
+        if (res.status === "Success") setTemplates(res.templates || []);
+        else setError(res.message || "Failed to fetch templates");
+      } catch (err) { setError(err.message || "Failed to fetch templates"); }
+      finally { setLoading(false); }
     };
-    fetchTemplates();
+    run();
   }, [category]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-cream text-ink">
       <Navbar />
-
-      {/* Header band */}
-      <section className="relative overflow-hidden border-b border-borderLight bg-white">
-        <div className="pointer-events-none absolute -top-24 right-10 w-80 h-80 rounded-full bg-lightBlue/50 blur-[110px]" />
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-14 text-center flex flex-col items-center">
-          <span className="inline-flex items-center gap-1.5 text-bluePrimary bg-lightBlue text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full mb-3">
-            <Sparkles size={13} /> Templates
-          </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-textHeading tracking-tight">
-            Find the perfect template
-          </h1>
-          <p className="text-textMuted mt-3 text-base sm:text-lg max-w-2xl">
+      <section className="flex-1 max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 pt-10 md:pt-20 pb-16 md:pb-28">
+        {/* Header */}
+        <div className="flex flex-wrap gap-x-16 gap-y-6 items-end justify-between animate-rise">
+          <div className="flex-1 basis-[520px]">
+            <div className="flex items-center gap-3 font-mono text-[12px] font-medium tracking-[.08em] text-muted2 mb-[18px]">
+              <span className="w-9 h-px bg-ink" />TEMPLATES
+            </div>
+            <h1 className="font-display text-[clamp(52px,7vw,104px)] leading-[.95] tracking-[-.02em] m-0">
+              Find the perfect <em className="text-terracotta">template</em>
+            </h1>
+          </div>
+          <p className="basis-[360px] flex-[0_1_360px] text-[17px] text-bodytext m-0">
             Unlock smarter workflows and achieve superior results with our best resources.
           </p>
         </div>
-      </section>
 
-      {/* Content */}
-      <section className="flex-1 w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-10">
         {/* Toolbar */}
-        <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-3 mb-8">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-textHeading">Latest Templates</h2>
-            {!loading && !error && (
-              <p className="text-sm text-textMuted mt-0.5">
-                {templates.length} {templates.length === 1 ? "template" : "templates"} available
-              </p>
-            )}
+        <div className="my-10 md:my-12 border-t border-ink border-b border-b-line py-[18px] flex flex-wrap gap-x-8 gap-y-4 items-center justify-between">
+          <div className="flex items-baseline gap-3.5">
+            <h2 className="font-display text-[28px] m-0">Latest Templates</h2>
+            {!loading && !error && <span className="font-mono text-[12px] text-muted2">{String(templates.length).padStart(2, "0")} templates</span>}
           </div>
-          <div className="w-full xs:w-auto">
-            <Dropdown id="main-category" label="Category" options={options} value={category} onChange={setCategory} />
+          <div className="flex flex-wrap gap-2">
+            {OPTIONS.map((o) => {
+              const active = category === o.value;
+              return (
+                <button key={o.value} onClick={() => setCategory(o.value)}
+                  className={`h-10 px-[18px] rounded-full border text-sm font-medium transition-all ${active ? "bg-ink text-cream border-ink" : "bg-transparent text-ink border-line hover:border-ink"}`}>
+                  {o.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {error ? (
-          <div className="w-full flex flex-col items-center text-center py-16">
-            <AlertCircle size={40} className="text-redAccent mb-3" />
-            <p className="text-textHeading font-semibold">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-5 py-2.5 bg-bluePrimary text-white rounded-xl font-semibold hover:bg-blueHover transition"
-            >
-              Retry
-            </button>
+          <div className="py-20 flex flex-col items-center text-center gap-2">
+            <AlertCircle size={38} className="text-likeRed" />
+            <p className="font-display text-[26px] m-0">{error}</p>
+            <button onClick={() => window.location.reload()} className="mt-4 h-12 px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">Retry</button>
           </div>
         ) : !loading && templates.length === 0 ? (
-          <div className="w-full flex flex-col items-center text-center py-16">
-            <PackageOpen size={40} className="text-grayLight mb-3" />
-            <p className="text-textHeading font-semibold">No templates in this category yet</p>
-            <p className="text-textMuted text-sm mt-1">Try a different category or check back soon.</p>
+          <div className="py-20 flex flex-col items-center text-center gap-2">
+            <PackageOpen size={38} className="text-faint" />
+            <p className="font-display text-[28px] m-0">No templates in this category yet</p>
+            <p className="text-muted2 text-sm m-0">Try a different category or check back soon.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-x-7 gap-y-14">
             {loading
-              ? Array.from({ length: 8 }).map((_, idx) => (
-                  <div key={`loading-${idx}`} className="w-full max-w-xs border border-borderLight rounded-2xl p-3 bg-white animate-pulse">
-                    <div className="w-full h-[180px] rounded-xl mb-3 bg-borderLight" />
-                    <div className="h-4 bg-borderLight rounded mb-2" />
-                    <div className="h-3 bg-borderLight rounded mb-3 w-2/3" />
-                    <div className="h-9 bg-borderLight rounded-xl" />
-                  </div>
-                ))
-              : templates.map((template) => (
-                  <TemplateCard
-                    key={template._id}
-                    id={template._id}
-                    image={getTemplateImageUrl(template.card_image)}
-                    title={template.name}
-                    description={template.card_content}
-                    category={template.template_category}
-                    price={template.price}
-                  />
+              ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[4/3] border border-line bg-creamAlt animate-pulse" />)
+              : templates.map((t) => (
+                  <TemplateCard key={t._id} id={t._id} image={getTemplateImageUrl(t.card_image)} title={t.name}
+                    description={t.card_content} category={t.template_category} price={t.template_type === "free" ? 0 : t.price} />
                 ))}
           </div>
         )}
       </section>
-
       <Footer />
     </div>
   );

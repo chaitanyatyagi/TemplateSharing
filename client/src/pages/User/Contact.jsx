@@ -1,122 +1,77 @@
-import Footer from "../../components/Footer";
-import Navbar from "../../components/Navbar";
-import ContactImage from "../../assets/contact-page.png";
 import { useState } from "react";
-import { Sparkles, Mail, MessageSquare, CheckCircle2, AlertCircle } from "lucide-react";
+import { Mail, MessageSquare, CheckCircle2, AlertCircle } from "lucide-react";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import ContactImage from "../../assets/contact-page.png";
 import ContactService from "../../api/contact";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", comments: "" });
+  const [form, setForm] = useState({ name: "", email: "", comments: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const change = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      setError(null);
-      setSuccess(null);
-      const response = await ContactService.createContact(formData.name, formData.email, formData.comments);
-      if (response.status === "Success") {
-        setSuccess(response.message || "Thanks for reaching out! We'll get back to you soon.");
-        setFormData({ name: "", email: "", comments: "" });
-      } else {
-        setError(response.message || "Failed to send message");
-      }
-    } catch (err) {
-      console.error("Error submitting contact form:", err);
-      setError(err.message || "Failed to send message");
-    } finally {
-      setLoading(false);
-    }
+      setLoading(true); setError(null); setSuccess(null);
+      const res = await ContactService.createContact(form.name, form.email, form.comments);
+      if (res.status === "Success") { setSuccess(res.message || "Thanks — we'll be in touch soon."); setForm({ name: "", email: "", comments: "" }); }
+      else setError(res.message || "Failed to send message");
+    } catch (err) { setError(err.message || "Failed to send message"); }
+    finally { setLoading(false); }
   };
 
-  const inputClass =
-    "w-full border border-borderLight rounded-xl px-4 py-3 bg-background focus:outline-none focus:ring-2 focus:ring-bluePrimary focus:border-bluePrimary transition";
+  const input = "h-11 border-0 border-b border-ink bg-transparent text-[16px] outline-none focus:border-terracotta transition-colors placeholder-faint";
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-cream text-ink">
       <Navbar />
-
-      {/* Header band */}
-      <section className="relative overflow-hidden border-b border-borderLight bg-white">
-        <div className="pointer-events-none absolute -top-24 right-10 w-80 h-80 rounded-full bg-lightBlue/50 blur-[110px]" />
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-14 text-center flex flex-col items-center">
-          <span className="inline-flex items-center gap-1.5 text-bluePrimary bg-lightBlue text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full mb-3">
-            <Sparkles size={13} /> We'd love to hear from you
-          </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-textHeading tracking-tight">Contact us</h1>
-          <p className="text-textMuted mt-3 text-base sm:text-lg max-w-2xl">
-            Questions, feedback or a custom request? Send us a message and we'll get back to you.
-          </p>
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="flex-1 w-full max-w-6xl mx-auto px-5 sm:px-8 lg:px-12 py-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        {/* Form */}
-        <div className="bg-white rounded-2xl shadow-sm border border-borderLight p-6 sm:p-8 flex flex-col gap-5 order-2 lg:order-1">
-          <div>
-            <h2 className="text-xl font-bold text-textHeading">Send us a message</h2>
-            <p className="text-sm text-textMuted mt-1">We usually respond within a day.</p>
+      <section className="flex-1 max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 pt-10 md:pt-20 pb-16 md:pb-28 flex flex-wrap gap-10 md:gap-24">
+        {/* Left */}
+        <div className="flex-1 min-w-0 basis-[440px] flex flex-col gap-6 animate-rise">
+          <div className="flex items-center gap-3 font-mono text-[12px] font-medium tracking-[.08em] text-muted2">
+            <span className="w-9 h-px bg-ink" />WE'D LOVE TO HEAR FROM YOU
           </div>
+          <h1 className="font-display text-[clamp(60px,8vw,120px)] leading-[.9] tracking-[-.02em] m-0">Contact <em className="text-terracotta">us</em></h1>
+          <p className="max-w-[440px] text-[18px] text-bodytext m-0">Questions, feedback or a custom request? Send us a message and we'll get back to you.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+            <div className="border border-line p-5 flex items-start gap-3 bg-paper">
+              <Mail size={18} className="text-terracotta mt-0.5 shrink-0" />
+              <div>
+                <p className="font-semibold text-ink text-sm m-0">Email us</p>
+                <p className="text-muted2 text-sm mt-0.5 m-0">We reply to every message.</p>
+              </div>
+            </div>
+            <div className="border border-line p-5 flex items-start gap-3 bg-paper">
+              <MessageSquare size={18} className="text-terracotta mt-0.5 shrink-0" />
+              <div>
+                <p className="font-semibold text-ink text-sm m-0">Custom requests</p>
+                <p className="text-muted2 text-sm mt-0.5 m-0">Need a bespoke template? Ask us.</p>
+              </div>
+            </div>
+          </div>
+          <img src={ContactImage} alt="Contact us" className="w-full max-w-md mt-2 border border-line" />
+        </div>
 
-          {success && (
-            <div className="flex items-start gap-2 p-3 bg-greenAccent/10 text-greenAccent rounded-xl text-sm">
-              <CheckCircle2 size={18} className="shrink-0 mt-0.5" /> {success}
-            </div>
-          )}
-          {error && (
-            <div className="flex items-start gap-2 p-3 bg-redAccent/10 text-redAccent rounded-xl text-sm">
-              <AlertCircle size={18} className="shrink-0 mt-0.5" /> {error}
-            </div>
-          )}
-
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input type="text" name="name" placeholder="Your name" value={formData.name} onChange={handleChange} className={inputClass} required />
-              <input type="email" name="email" placeholder="Email address" value={formData.email} onChange={handleChange} className={inputClass} required />
-            </div>
-            <textarea name="comments" placeholder="How can we help?" rows="6" value={formData.comments} onChange={handleChange} className={`${inputClass} resize-none`} required />
-            <button
-              type="submit"
-              disabled={loading}
-              className="self-start bg-bluePrimary text-white px-6 py-3 rounded-xl font-semibold hover:bg-blueHover transition-all shadow-sm hover:shadow-md disabled:opacity-50"
-            >
-              {loading ? "Sending..." : "Send message"}
+        {/* Form */}
+        <div className="flex-1 min-w-0 basis-[420px] bg-paper border border-ink p-6 sm:p-8 flex flex-col gap-5 [animation:rise_.8s_.1s_both]">
+          <h2 className="font-display text-[32px] m-0">Send us a message</h2>
+          {success && <div className="flex items-start gap-2 p-3 border border-successGreen text-successGreen text-sm"><CheckCircle2 size={18} className="shrink-0 mt-0.5" />{success}</div>}
+          {error && <div className="flex items-start gap-2 p-3 bg-[#F4DEDA] text-likeRed text-sm"><AlertCircle size={18} className="shrink-0 mt-0.5" />{error}</div>}
+          <form onSubmit={submit} className="flex flex-col gap-6">
+            <input type="text" name="name" placeholder="Your name" value={form.name} onChange={change} className={input} required />
+            <input type="email" name="email" placeholder="Email address" value={form.email} onChange={change} className={input} required />
+            <textarea name="comments" placeholder="How can we help?" rows="5" value={form.comments} onChange={change}
+              className="border-0 border-b border-ink bg-transparent text-[16px] outline-none focus:border-terracotta transition-colors resize-none placeholder-faint pb-2" required />
+            <button type="submit" disabled={loading} className="self-start h-14 px-7 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta active:scale-[.98] transition-all disabled:opacity-50">
+              {loading ? "Sending…" : "Send message"}
             </button>
           </form>
         </div>
-
-        {/* Aside */}
-        <div className="flex flex-col gap-6 order-1 lg:order-2">
-          <img src={ContactImage} alt="Contact us" className="w-full h-auto rounded-2xl" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white border border-borderLight rounded-2xl p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-lightBlue flex items-center justify-center shrink-0">
-                <Mail size={18} className="text-bluePrimary" />
-              </div>
-              <div>
-                <p className="font-semibold text-textHeading text-sm">Email us</p>
-                <p className="text-textMuted text-sm mt-0.5">We reply to every message.</p>
-              </div>
-            </div>
-            <div className="bg-white border border-borderLight rounded-2xl p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-lightBlue flex items-center justify-center shrink-0">
-                <MessageSquare size={18} className="text-bluePrimary" />
-              </div>
-              <div>
-                <p className="font-semibold text-textHeading text-sm">Custom requests</p>
-                <p className="text-textMuted text-sm mt-0.5">Need a bespoke template? Ask us.</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </section>
-
       <Footer />
     </div>
   );

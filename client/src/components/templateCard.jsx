@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, ShoppingCart, Check } from "lucide-react";
+import { Heart, Check } from "lucide-react";
 import { useSnackbar } from "notistack";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
@@ -8,14 +8,13 @@ import { useAuth } from "../context/AuthContext";
 
 const TemplateCard = ({
   id = 1,
-  image = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800",
-  title = "How to build a second brain with Notion",
-  description = "How to implement the Notion with AI template in our day to day life...",
-  category = "Business",
-  price = 599,
-  onAddToCart,
+  image = "",
+  title = "Untitled template",
+  description = "",
+  category = "General",
+  price = 0,
 }) => {
-  const [addedToCart, setAddedToCart] = useState(false);
+  const [added, setAdded] = useState(false);
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { isWishlisted, toggleWishlist } = useFavorites();
@@ -25,75 +24,79 @@ const TemplateCard = ({
   const liked = isWishlisted(id);
   const isFree = Number(price) === 0;
 
-  const requireLogin = (message) => {
-    enqueueSnackbar(message, { variant: "info", anchorOrigin: { vertical: "top", horizontal: "center" } });
+  const requireLogin = (msg) => {
+    enqueueSnackbar(msg, { variant: "info", anchorOrigin: { vertical: "top", horizontal: "center" } });
     navigate("/login");
   };
 
-  const handleLike = () => {
+  const handleLike = (e) => {
+    e.stopPropagation();
     if (!user) return requireLogin("Log in to save templates to your wishlist");
     toggleWishlist(id);
   };
 
-  const handleAddToCart = () => {
+  const handleAdd = () => {
     if (!user) return requireLogin("Log in to add templates to your cart");
     addItem({ templateId: String(id), title, image, category, price: Number(price) || 0 });
-    setAddedToCart(true);
+    setAdded(true);
     enqueueSnackbar("Added to cart", { variant: "success", anchorOrigin: { vertical: "top", horizontal: "center" } });
-    if (onAddToCart) onAddToCart(id);
   };
 
   return (
-    <div className="group flex flex-col h-full w-full max-w-xs rounded-2xl bg-white border border-borderLight shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+    <article className="flex flex-col gap-3.5 group">
       {/* Image */}
-      <div className="relative cursor-pointer overflow-hidden" onClick={() => navigate(`/templates/${id}`)}>
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-[190px] object-cover group-hover:scale-[1.06] transition-transform duration-500"
-          onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800"; }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        {/* Price pill */}
-        <span className="absolute bottom-3 left-3 bg-white/95 backdrop-blur text-textHeading font-bold text-sm px-3 py-1 rounded-full shadow-sm">
+      <div
+        onClick={() => navigate(`/templates/${id}`)}
+        className="relative aspect-[4/3] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(135deg,#EDE7DD_0_9px,#E7E0D4_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
+      >
+        {image ? (
+          <img
+            src={image}
+            alt={title}
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
+          />
+        ) : (
+          <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] text-faint tracking-[.06em]">
+            template cover
+          </span>
+        )}
+        <span className="absolute left-3 top-3 bg-cream border border-ink px-2.5 py-1 font-mono text-[12px] font-medium">
           {isFree ? "Free" : `₹${price}`}
         </span>
-        {/* Wishlist */}
         <button
-          onClick={(e) => { e.stopPropagation(); handleLike(); }}
-          className="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full p-2 shadow-sm hover:bg-white hover:scale-110 transition-all focus:outline-none"
+          onClick={handleLike}
           aria-label="Toggle wishlist"
+          className="absolute right-2.5 top-2.5 w-10 h-10 rounded-full border border-line bg-cream flex items-center justify-center hover:scale-110 active:scale-90 transition-transform"
         >
-          <Heart size={18} fill={liked ? "#2563EB" : "none"} color={liked ? "#2563EB" : "#606060"} className="transition-all" />
+          <Heart size={17} fill={liked ? "#B4532A" : "none"} color={liked ? "#B4532A" : "#1C1A17"} />
         </button>
       </div>
 
-      <div className="flex flex-col flex-grow p-4">
-        <span className="inline-block self-start bg-lightBlue text-bluePrimary text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-md mb-2">
-          {category}
-        </span>
-        <h3
-          className="font-semibold text-base sm:text-lg text-textHeading leading-snug line-clamp-1 cursor-pointer group-hover:text-bluePrimary transition-colors"
-          onClick={() => navigate(`/templates/${id}`)}
-        >
-          {title}
-        </h3>
-        <p className="text-sm text-textMuted mt-1 mb-4 line-clamp-2 leading-relaxed">{description}</p>
+      <div className="font-mono text-[11px] font-medium tracking-[.1em] uppercase text-terracotta">{category}</div>
+      <h3
+        onClick={() => navigate(`/templates/${id}`)}
+        className="font-display text-[27px] leading-[1.08] -mt-1 cursor-pointer text-ink hover:text-terracotta transition-colors"
+      >
+        {title}
+      </h3>
+      {description && (
+        <p className="text-sm text-muted2 leading-[1.55] line-clamp-2 m-0">{description}</p>
+      )}
 
+      {added ? (
+        <div className="mt-auto h-[46px] border border-successGreen rounded-full text-successGreen font-semibold text-sm flex items-center justify-center gap-2 animate-fadeIn">
+          <Check size={16} /> Added to cart
+        </div>
+      ) : (
         <button
-          onClick={handleAddToCart}
-          className={`mt-auto w-full flex items-center justify-center gap-2 font-semibold px-5 py-2.5 rounded-xl text-sm transition-all ${
-            addedToCart
-              ? "bg-greenAccent/10 text-greenAccent cursor-default"
-              : "bg-bluePrimary hover:bg-blueHover text-white shadow-sm hover:shadow-md"
-          }`}
-          disabled={addedToCart}
+          onClick={handleAdd}
+          className="mt-auto h-[46px] border border-ink rounded-full bg-transparent text-ink font-semibold text-sm hover:bg-ink hover:text-cream active:scale-[.97] transition-all"
         >
-          {addedToCart ? <Check size={16} /> : <ShoppingCart size={16} />}
-          {addedToCart ? "Added to cart" : "Add to cart"}
+          Add to cart
         </button>
-      </div>
-    </div>
+      )}
+    </article>
   );
 };
 

@@ -1,35 +1,74 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Sparkles, Download, FileText, ShieldCheck } from "lucide-react";
+import { ArrowRight, FileText, Download, ShieldCheck, Heart, Bookmark } from "lucide-react";
+import { useSnackbar } from "notistack";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import Card from "../../components/blogCard";
 import TemplateCard from "../../components/templateCard";
 import Home1 from "../../assets/home1.png";
 import TemplateService from "../../api/template";
 import BlogService from "../../api/blog";
+import { useAuth } from "../../context/AuthContext";
+import { useFavorites } from "../../context/FavoritesContext";
 import { getTemplateImageUrl, getServerAssetUrl } from "../../utils/assetUrl";
 
-const HOME_PAGE_ITEM_LIMIT = 4;
+const LIMIT = 4;
+const TICKER = ["Notion systems", "Financial models", "Pitch decks", "Resume kits", "Content calendars", "Dashboards", "SOP templates", "Growth playbooks"];
 
-// Consistent section heading (eyebrow + title + subtitle)
-const SectionHead = ({ eyebrow, title, subtitle }) => (
-  <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-10">
-    {eyebrow && (
-      <span className="inline-flex items-center gap-1.5 text-bluePrimary bg-lightBlue text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full mb-3">
-        {eyebrow}
-      </span>
-    )}
-    <h2 className="text-2xl sm:text-3xl md:text-[34px] font-bold text-textHeading leading-tight">{title}</h2>
-    {subtitle && <p className="text-textMuted mt-3 text-base sm:text-lg leading-relaxed">{subtitle}</p>}
-  </div>
-);
+const stripHtml = (s) => (s || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
-const CardSkeleton = () => (
-  <div className="w-full max-w-xs rounded-2xl border border-borderLight bg-white p-3 animate-pulse">
-    <div className="w-full h-[180px] rounded-xl mb-3 bg-borderLight" />
-    <div className="h-4 bg-borderLight rounded mb-2" />
-    <div className="h-3 bg-borderLight rounded w-2/3" />
+// Editorial numbered blog row (with working like/save)
+const BlogRow = ({ blog, num }) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isSaved, toggleSaved } = useFavorites();
+  const { enqueueSnackbar } = useSnackbar();
+  const [liked, setLiked] = useState(blog.likedByMe || false);
+  const [likes, setLikes] = useState(blog.likesCount || 0);
+  const saved = isSaved(blog._id);
+
+  const gate = (msg) => { enqueueSnackbar(msg, { variant: "info", anchorOrigin: { vertical: "top", horizontal: "center" } }); navigate("/login"); };
+  const like = async (e) => {
+    e.stopPropagation();
+    if (!user) return gate("Log in to like blogs");
+    const pl = liked, pc = likes; setLiked(!pl); setLikes((c) => (!pl ? c + 1 : Math.max(0, c - 1)));
+    try { const r = await BlogService.toggleLike(blog._id); if (r.status === "Success") { setLiked(r.liked); setLikes(r.likesCount); } else { setLiked(pl); setLikes(pc); } }
+    catch { setLiked(pl); setLikes(pc); }
+  };
+  const save = (e) => { e.stopPropagation(); if (!user) return gate("Log in to save blogs"); toggleSaved(blog._id); };
+
+  return (
+    <article className="grid grid-cols-[minmax(40px,64px)_minmax(0,1fr)_auto] gap-x-5 gap-y-4 items-center py-6 border-b border-line">
+      <span className="font-mono text-[13px] text-faint">{num}</span>
+      <div onClick={() => navigate(`/blogs/${blog._id}`)} className="cursor-pointer flex flex-col gap-1.5 min-w-0 hover:translate-x-2.5 transition-transform duration-300">
+        <span className="font-mono text-[11px] font-medium tracking-[.1em] uppercase text-terracotta">{blog.type}</span>
+        <h3 className="font-display text-[clamp(24px,2.6vw,36px)] leading-[1.08] text-ink m-0">{blog.name}</h3>
+        <p className="text-sm text-muted2 max-w-[640px] line-clamp-1 m-0">{stripHtml(blog.content).slice(0, 120)}</p>
+      </div>
+      <div className="flex gap-1.5 items-center">
+        <button onClick={like} className="h-10 px-3 border border-line rounded-full flex items-center gap-1.5 font-mono text-[13px] text-bodytext hover:border-likeRed transition-colors active:scale-90">
+          <Heart size={16} fill={liked ? "#B3261E" : "none"} color={liked ? "#B3261E" : "currentColor"} />{likes}
+        </button>
+        <button onClick={save} aria-label="Save" className="w-10 h-10 border border-line rounded-full flex items-center justify-center hover:border-ink transition-colors active:scale-90">
+          <Bookmark size={16} fill={saved ? "#1C1A17" : "none"} color="#1C1A17" />
+        </button>
+      </div>
+    </article>
+  );
+};
+
+const SectionHead = ({ num, label, title, subtitle, cta, onCta }) => (
+  <div className="flex flex-wrap gap-x-12 gap-y-5 items-end justify-between border-b border-ink pb-7 mb-10">
+    <div className="flex-1 min-w-[280px] basis-[420px]">
+      <div className="font-mono text-[12px] font-medium tracking-[.08em] text-terracotta mb-3.5">{num} / {label}</div>
+      <h2 className="font-display text-[clamp(40px,5vw,68px)] leading-none tracking-[-.015em] text-ink m-0">{title}</h2>
+    </div>
+    <div className="basis-[380px] flex-[0_1_380px] flex flex-col gap-4 items-start">
+      <p className="text-bodytext m-0">{subtitle}</p>
+      <button onClick={onCta} className="flex gap-2.5 items-center font-semibold text-[15px] text-ink hover:text-terracotta hover:gap-4 transition-all">
+        {cta} <ArrowRight size={17} />
+      </button>
+    </div>
   </div>
 );
 
@@ -37,188 +76,109 @@ const Home = () => {
   const navigate = useNavigate();
   const [templates, setTemplates] = useState([]);
   const [blogs, setBlogs] = useState([]);
-  const [loadingTemplates, setLoadingTemplates] = useState(true);
-  const [loadingBlogs, setLoadingBlogs] = useState(true);
+  const [loadingT, setLoadingT] = useState(true);
+  const [loadingB, setLoadingB] = useState(true);
 
   useEffect(() => {
-    const fetchTemplates = async () => {
-      try {
-        const response = await TemplateService.getAllTemplates();
-        if (response.status === "Success") {
-          setTemplates((response.templates || []).slice(0, HOME_PAGE_ITEM_LIMIT));
-        }
-      } catch (err) {
-        console.error("Error fetching templates:", err);
-      } finally {
-        setLoadingTemplates(false);
-      }
-    };
-
-    const fetchBlogs = async () => {
-      try {
-        const response = await BlogService.getAllBlogs(1, HOME_PAGE_ITEM_LIMIT);
-        if (response.status === "Success") setBlogs(response.blogs || []);
-      } catch (err) {
-        console.error("Error fetching blogs:", err);
-      } finally {
-        setLoadingBlogs(false);
-      }
-    };
-
-    fetchTemplates();
-    fetchBlogs();
+    TemplateService.getAllTemplates()
+      .then((r) => { if (r.status === "Success") setTemplates((r.templates || []).slice(0, LIMIT)); })
+      .catch((e) => console.error(e)).finally(() => setLoadingT(false));
+    BlogService.getAllBlogs(1, LIMIT)
+      .then((r) => { if (r.status === "Success") setBlogs(r.blogs || []); })
+      .catch((e) => console.error(e)).finally(() => setLoadingB(false));
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-background">
+    <div className="min-h-screen flex flex-col bg-cream text-ink">
       <Navbar />
 
-      {/* ---------------- Hero ---------------- */}
-      <section className="relative overflow-hidden">
-        {/* soft brand glow */}
-        <div className="pointer-events-none absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-bluePrimary/10 blur-[120px]" />
-        <div className="pointer-events-none absolute top-40 -left-24 w-[360px] h-[360px] rounded-full bg-lightBlue/50 blur-[120px]" />
+      {/* HERO */}
+      <section className="max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 pt-10 md:pt-24 pb-12 md:pb-20 flex flex-wrap gap-8 md:gap-[72px] items-end">
+        <div className="flex-1 min-w-0 basis-[520px] flex flex-col gap-7 animate-rise">
+          <div className="flex items-center gap-3 font-mono text-[12px] font-medium tracking-[.08em] uppercase text-muted2">
+            <span className="w-9 h-px bg-ink" />100+ premium templates &amp; guides
+          </div>
+          <h1 className="font-display font-normal text-[clamp(52px,7.4vw,112px)] leading-[.94] tracking-[-.02em] text-balance m-0">
+            Productivity templates for <em className="text-terracotta">ambitious</em> teams &amp; professionals.
+          </h1>
+          <p className="max-w-[520px] text-[clamp(17px,1.4vw,19px)] leading-[1.6] text-bodytext m-0">
+            Stop starting from scratch. Get a head start on your best work with ready-to-use
+            templates you can ship today — plus sharp guides to lead tomorrow.
+          </p>
+          <div className="flex flex-wrap gap-x-7 gap-y-3 items-center">
+            <button onClick={() => navigate("/templates")} className="h-14 px-7 rounded-full bg-ink text-cream font-semibold text-[15px] flex items-center gap-3 hover:bg-terracotta hover:gap-4 active:scale-[.97] transition-all">
+              Browse templates <ArrowRight size={18} />
+            </button>
+            <button onClick={() => navigate("/blogs")} className="font-semibold text-[15px] text-ink border-b border-ink pb-1.5 hover:text-terracotta transition-colors">
+              Read the blog
+            </button>
+          </div>
+          <div className="flex flex-wrap border-t border-line mt-3 text-sm text-bodytext">
+            <div className="flex-1 basis-[160px] flex gap-2.5 items-center pt-4 pr-4"><FileText size={17} className="text-terracotta shrink-0" />Excel, PDF, Docs &amp; Figma</div>
+            <div className="flex-1 basis-[160px] flex gap-2.5 items-center pt-4 pr-4"><Download size={17} className="text-terracotta shrink-0" />Instant download</div>
+            <div className="flex-1 basis-[160px] flex gap-2.5 items-center pt-4 pr-4"><ShieldCheck size={17} className="text-terracotta shrink-0" />Emailed to your inbox</div>
+          </div>
+        </div>
+        <figure className="flex-1 min-w-0 basis-[380px] m-0 flex flex-col gap-3 [animation:rise_.9s_.15s_both]">
+          <div className="bg-paper border border-ink p-5 sm:p-8 shadow-[10px_10px_0_#E4DCCF] hover:shadow-[16px_16px_0_#B4532A] hover:-rotate-1 hover:-translate-y-1 transition-all duration-500">
+            <img src={Home1} alt="Productivity templates" className="w-full block" />
+          </div>
+          <figcaption className="font-mono text-[12px] text-muted2 tracking-[.04em]">FIG. 01 — A template, ready to ship</figcaption>
+        </figure>
+      </section>
 
-        <div className="relative w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 px-5 sm:px-8 lg:px-12 py-14 md:py-20">
-          <div className="flex-1 flex flex-col gap-6">
-            <span className="inline-flex items-center gap-2 self-start text-bluePrimary bg-white border border-borderLight shadow-sm text-xs font-semibold px-3 py-1.5 rounded-full">
-              <Sparkles size={14} /> 100+ premium templates &amp; guides
+      {/* MARQUEE */}
+      <div className="border-y border-ink bg-creamAlt overflow-hidden">
+        <div className="flex w-max animate-marquee">
+          {[...TICKER, ...TICKER].map((tk, i) => (
+            <span key={i} className="flex items-center gap-7 px-3.5 py-4 font-display italic text-[30px] leading-none whitespace-nowrap">
+              {tk}<span className="w-2 h-2 rounded-full bg-terracotta" />
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-textHeading leading-[1.08] tracking-tight">
-              Productivity templates for{" "}
-              <span className="text-bluePrimary">ambitious</span> teams &amp; professionals.
-            </h1>
-            <p className="text-textMuted text-base md:text-lg leading-relaxed max-w-xl">
-              Stop starting from scratch. Get a head start on your best work with ready-to-use
-              templates you can ship today — plus sharp guides to lead tomorrow.
-            </p>
-            <div className="flex flex-wrap items-center gap-3 mt-1">
-              <button
-                onClick={() => navigate("/templates")}
-                className="inline-flex items-center gap-2 bg-bluePrimary text-white px-6 py-3 rounded-xl font-semibold shadow-sm hover:bg-blueHover hover:shadow-md transition-all"
-              >
-                Browse templates <ArrowRight size={18} />
-              </button>
-              <button
-                onClick={() => navigate("/blogs")}
-                className="inline-flex items-center gap-2 bg-white text-textHeading border border-border px-6 py-3 rounded-xl font-semibold hover:border-bluePrimary hover:text-bluePrimary transition-all"
-              >
-                Read the blog
-              </button>
-            </div>
-            {/* trust row */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-textMuted">
-              <span className="inline-flex items-center gap-2"><FileText size={16} className="text-bluePrimary" /> Excel, PDF, Docs &amp; Figma</span>
-              <span className="inline-flex items-center gap-2"><Download size={16} className="text-bluePrimary" /> Instant download</span>
-              <span className="inline-flex items-center gap-2"><ShieldCheck size={16} className="text-bluePrimary" /> Emailed to your inbox</span>
-            </div>
-          </div>
-
-          <div className="flex-1 flex justify-center w-full">
-            <div className="relative w-full max-w-md">
-              <div className="absolute inset-0 bg-gradient-to-tr from-lightBlue to-white rounded-3xl rotate-3" />
-              <div className="relative bg-white border border-borderLight rounded-3xl shadow-xl p-6">
-                <img src={Home1} alt="Productivity templates" className="w-full" />
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* ---------------- Templates ---------------- */}
-      <section className="w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-14">
-        <SectionHead
-          eyebrow="Templates"
-          title="Find the perfect template"
+      {/* TEMPLATES */}
+      <section className="max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 pt-14 md:pt-28 pb-10">
+        <SectionHead num="02" label="TEMPLATES" title="Find the perfect template"
           subtitle="Our most popular picks to help you work smarter and deliver exceptional results."
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-          {loadingTemplates ? (
-            Array.from({ length: HOME_PAGE_ITEM_LIMIT }).map((_, i) => <CardSkeleton key={`t-${i}`} />)
-          ) : templates.length === 0 ? (
-            <p className="text-textMuted col-span-full text-center py-6">No templates available yet.</p>
-          ) : (
-            templates.map((template) => (
-              <div key={template._id} className="w-full max-w-xs">
-                <TemplateCard
-                  id={template._id}
-                  image={getTemplateImageUrl(template.card_image)}
-                  title={template.name}
-                  description={template.card_content}
-                  category={template.template_category}
-                  price={template.price}
-                />
-              </div>
-            ))
-          )}
-        </div>
-        <div className="flex justify-center mt-10">
-          <button
-            onClick={() => navigate("/templates")}
-            className="inline-flex items-center gap-2 text-bluePrimary font-semibold px-6 py-3 rounded-xl border border-borderLight bg-white hover:border-bluePrimary hover:shadow-sm transition-all"
-          >
-            View all templates <ArrowRight size={18} />
-          </button>
+          cta="View all templates" onCta={() => navigate("/templates")} />
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-x-7 gap-y-12">
+          {loadingT
+            ? Array.from({ length: LIMIT }).map((_, i) => <div key={i} className="aspect-[4/3] border border-line bg-creamAlt animate-pulse" />)
+            : templates.map((t) => (
+                <TemplateCard key={t._id} id={t._id} image={getTemplateImageUrl(t.card_image)} title={t.name}
+                  description={t.card_content} category={t.template_category} price={t.template_type === "free" ? 0 : t.price} />
+              ))}
         </div>
       </section>
 
-      {/* ---------------- Newsletter band ---------------- */}
-      <section className="w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-6">
-        <div className="relative overflow-hidden rounded-3xl bg-darkBg px-6 sm:px-12 py-12 text-center">
-          <div className="pointer-events-none absolute -top-16 -right-10 w-72 h-72 rounded-full bg-bluePrimary/25 blur-[100px]" />
-          <div className="relative max-w-xl mx-auto flex flex-col items-center gap-4">
-            <h3 className="text-2xl sm:text-3xl font-bold text-white">Get productivity tips in your inbox</h3>
-            <p className="text-white/70">Fresh templates and guides, no spam. Unsubscribe anytime.</p>
-            <form className="flex flex-col sm:flex-row gap-3 w-full max-w-md mt-2" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 rounded-xl px-4 py-3 bg-white/10 text-white placeholder-white/50 border border-white/15 focus:outline-none focus:ring-2 focus:ring-bluePrimary"
-              />
-              <button type="submit" className="bg-bluePrimary text-white px-6 py-3 rounded-xl font-semibold hover:bg-blueHover transition-all">
-                Subscribe
-              </button>
-            </form>
+      {/* NEWSLETTER */}
+      <section className="max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 py-10">
+        <div className="bg-ink text-cream p-8 sm:p-12 md:p-20 flex flex-wrap gap-8 md:gap-16 items-end justify-between">
+          <div className="flex-1 basis-[420px]">
+            <div className="font-mono text-[12px] font-medium tracking-[.08em] text-terracottaLight mb-4">THE NEWSLETTER</div>
+            <h3 className="font-display text-[clamp(36px,4.4vw,60px)] leading-none m-0">Get productivity tips <em className="text-cream">in your inbox</em></h3>
+            <p className="text-[#BDB5A8] mt-4 m-0">Fresh templates and guides, no spam. Unsubscribe anytime.</p>
           </div>
+          <form onSubmit={(e) => e.preventDefault()} className="flex-1 basis-[360px] flex flex-wrap gap-3 items-stretch">
+            <input type="email" placeholder="Enter your email" className="flex-1 basis-[220px] h-14 bg-transparent border-b border-muted2 text-cream placeholder-faint text-[18px] outline-none focus:border-terracottaLight transition-colors" />
+            <button type="submit" className="h-14 px-7 rounded-full bg-cream text-ink font-semibold text-[15px] hover:bg-terracotta hover:text-paper active:scale-[.97] transition-all">Subscribe</button>
+          </form>
         </div>
       </section>
 
-      {/* ---------------- Blogs ---------------- */}
-      <section className="w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-14">
-        <SectionHead
-          eyebrow="Insights"
-          title="Accelerate your growth with our blogs"
+      {/* BLOGS */}
+      <section className="max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 pt-14 md:pt-24 pb-16 md:pb-28">
+        <SectionHead num="03" label="INSIGHTS" title="Accelerate your growth with our blogs"
           subtitle="We break down the latest AI updates and skill shifts into strategies you can actually use."
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-          {loadingBlogs ? (
-            Array.from({ length: HOME_PAGE_ITEM_LIMIT }).map((_, i) => <CardSkeleton key={`b-${i}`} />)
-          ) : blogs.length === 0 ? (
-            <p className="text-textMuted col-span-full text-center py-6">No blogs available yet.</p>
-          ) : (
-            blogs.map((blog) => (
-              <div key={blog._id} className="w-full max-w-xs">
-                <Card
-                  id={blog._id}
-                  title={blog.name}
-                  description={(blog.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().substring(0, 100) + "..."}
-                  category={blog.type}
-                  likesCount={blog.likesCount || 0}
-                  isLiked={blog.likedByMe || false}
-                  imageUrl={getServerAssetUrl(blog.imageUrl)}
-                  useOptimizedLoading={true}
-                />
-              </div>
-            ))
-          )}
-        </div>
-        <div className="flex justify-center mt-10">
-          <button
-            onClick={() => navigate("/blogs")}
-            className="inline-flex items-center gap-2 text-bluePrimary font-semibold px-6 py-3 rounded-xl border border-borderLight bg-white hover:border-bluePrimary hover:shadow-sm transition-all"
-          >
-            View all blogs <ArrowRight size={18} />
-          </button>
+          cta="View all blogs" onCta={() => navigate("/blogs")} />
+        <div>
+          {loadingB
+            ? Array.from({ length: LIMIT }).map((_, i) => <div key={i} className="h-20 border-b border-line animate-pulse" />)
+            : blogs.length === 0
+              ? <p className="text-muted2 py-6">No blogs available yet.</p>
+              : blogs.map((b, i) => <BlogRow key={b._id} blog={{ ...b, imageUrl: getServerAssetUrl(b.imageUrl) }} num={String(i + 1).padStart(2, "0")} />)}
         </div>
       </section>
 

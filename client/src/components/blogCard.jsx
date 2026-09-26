@@ -8,10 +8,10 @@ import BlogService from "../api/blog";
 
 const Card = ({
   id = 1,
-  image = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800",
-  title = "How to build a second brain with Notion",
-  description = "How to implement the Notion with AI template in our day to day life...",
-  category = "Business",
+  image = "",
+  title = "Untitled",
+  description = "",
+  category = "General",
   likesCount: initialLikes = 0,
   isLiked: initialIsLiked = false,
   imageUrl,
@@ -27,31 +27,25 @@ const Card = ({
   const { user } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const saved = isSaved(id);
+  const src = imageUrl || image;
 
   useEffect(() => { setLiked(initialIsLiked); }, [initialIsLiked]);
   useEffect(() => { setLikesCount(initialLikes); }, [initialLikes]);
 
-  // Lazy loading with Intersection Observer
   useEffect(() => {
     if (!useOptimizedLoading || !imageRef.current) return;
     const el = imageRef.current;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.src = entry.target.dataset.src;
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: "100px", threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.unobserve(el);
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) { en.target.src = en.target.dataset.src; obs.unobserve(en.target); }
+      });
+    }, { rootMargin: "100px", threshold: 0.1 });
+    obs.observe(el);
+    return () => obs.unobserve(el);
   }, [useOptimizedLoading]);
 
-  const requireLogin = (message) => {
-    enqueueSnackbar(message, { variant: "info", anchorOrigin: { vertical: "top", horizontal: "center" } });
+  const requireLogin = (msg) => {
+    enqueueSnackbar(msg, { variant: "info", anchorOrigin: { vertical: "top", horizontal: "center" } });
     navigate("/login");
   };
 
@@ -59,27 +53,16 @@ const Card = ({
     e.stopPropagation();
     if (!user) return requireLogin("Log in to like blogs");
     if (likeBusy) return;
-    const prevLiked = liked;
-    const prevCount = likesCount;
-    setLiked(!prevLiked);
-    setLikesCount((c) => (!prevLiked ? c + 1 : Math.max(0, c - 1)));
+    const pl = liked, pc = likesCount;
+    setLiked(!pl); setLikesCount((c) => (!pl ? c + 1 : Math.max(0, c - 1)));
     try {
       setLikeBusy(true);
       const res = await BlogService.toggleLike(id);
-      if (res.status === "Success") {
-        setLiked(res.liked);
-        setLikesCount(res.likesCount);
-      } else {
-        setLiked(prevLiked);
-        setLikesCount(prevCount);
-      }
+      if (res.status === "Success") { setLiked(res.liked); setLikesCount(res.likesCount); }
+      else { setLiked(pl); setLikesCount(pc); }
     } catch {
-      setLiked(prevLiked);
-      setLikesCount(prevCount);
-      enqueueSnackbar("Couldn't update like. Try again.", { variant: "error" });
-    } finally {
-      setLikeBusy(false);
-    }
+      setLiked(pl); setLikesCount(pc);
+    } finally { setLikeBusy(false); }
   };
 
   const handleSave = (e) => {
@@ -89,55 +72,45 @@ const Card = ({
   };
 
   return (
-    <div className="group flex flex-col h-full w-full max-w-sm rounded-2xl bg-white border border-borderLight shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-      {/* Image */}
-      <div className="relative overflow-hidden cursor-pointer" onClick={() => navigate(`/blogs/${id}`)}>
+    <article className="flex flex-col gap-3 group">
+      <div
+        onClick={() => navigate(`/blogs/${id}`)}
+        className="relative aspect-[3/2] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(45deg,#EDE7DD_0_9px,#E7E0D4_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
+      >
         {useOptimizedLoading ? (
-          <>
-            {!imageLoaded && <div className="w-full h-[170px] bg-borderLight animate-pulse" />}
-            <img
-              ref={imageRef}
-              data-src={imageUrl || image}
-              src={imageLoaded ? (imageUrl || image) : ""}
-              alt={title}
-              className={`w-full h-[170px] object-cover group-hover:scale-[1.06] transition-all duration-500 ${imageLoaded ? "opacity-100" : "opacity-0 absolute inset-0"}`}
-              onLoad={() => setImageLoaded(true)}
-              onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800"; setImageLoaded(true); }}
-              loading="lazy"
-            />
-          </>
-        ) : (
           <img
-            src={image}
+            ref={imageRef}
+            data-src={src}
             alt={title}
-            className="w-full h-[170px] object-cover group-hover:scale-[1.06] transition-transform duration-500"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
+            loading="lazy"
           />
+        ) : (
+          src && <img src={src} alt={title} className="absolute inset-0 w-full h-full object-cover" />
         )}
       </div>
 
-      <div className="flex flex-col flex-grow p-4">
-        <span className="inline-block self-start bg-lightBlue text-bluePrimary text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-md mb-2 capitalize">
-          {category}
-        </span>
-        <h3
-          className="font-semibold text-base sm:text-lg text-textHeading leading-snug mb-1 line-clamp-1 cursor-pointer group-hover:text-bluePrimary transition-colors"
-          onClick={() => navigate(`/blogs/${id}`)}
-        >
-          {title}
-        </h3>
-        <p className="text-sm text-textMuted mb-3 line-clamp-2 leading-relaxed">{description}</p>
+      <div className="font-mono text-[11px] font-medium tracking-[.1em] uppercase text-terracotta mt-1">{category}</div>
+      <h3
+        onClick={() => navigate(`/blogs/${id}`)}
+        className="font-display text-[28px] leading-[1.08] -mt-0.5 cursor-pointer text-ink hover:text-terracotta transition-colors"
+      >
+        {title}
+      </h3>
+      {description && <p className="text-sm text-muted2 line-clamp-2 m-0">{description}</p>}
 
-        <div className="flex justify-between items-center border-t border-borderLight mt-auto pt-3 text-sm text-textMuted">
-          <button onClick={handleLike} className="flex items-center gap-1.5 hover:text-redAccent transition-colors focus:outline-none">
-            <Heart size={18} fill={liked ? "#EF4444" : "none"} color={liked ? "#EF4444" : "currentColor"} className="transition-all" />
-            <span>{likesCount}</span>
-          </button>
-          <button onClick={handleSave} className="focus:outline-none hover:text-bluePrimary transition-colors" aria-label="Save blog">
-            <Bookmark size={18} fill={saved ? "#2563EB" : "none"} color={saved ? "#2563EB" : "currentColor"} className="transition-all" />
-          </button>
-        </div>
+      <div className="mt-auto pt-3 border-t border-line flex justify-between items-center">
+        <button onClick={handleLike} className="flex items-center gap-2 font-mono text-[13px] font-medium text-bodytext hover:text-likeRed transition-colors active:scale-90">
+          <Heart size={17} fill={liked ? "#B3261E" : "none"} color={liked ? "#B3261E" : "currentColor"} />
+          {likesCount}
+        </button>
+        <button onClick={handleSave} aria-label="Save blog" className="text-bodytext hover:text-ink transition-colors active:scale-90">
+          <Bookmark size={17} fill={saved ? "#1C1A17" : "none"} color="currentColor" />
+        </button>
       </div>
-    </div>
+    </article>
   );
 };
 

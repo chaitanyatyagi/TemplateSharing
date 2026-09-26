@@ -1,77 +1,94 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, ShoppingCart } from "lucide-react";
-import ProfileAvatar from "../utils/ProfileAvatar";
 import MainLogo from "../assets/main-logo-user.png";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 
+const initialsOf = (name) =>
+  (name || "You")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
 const Navbar = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { count } = useCart();
   const { user, isAdmin } = useAuth();
 
-  const menuItems = [
+  const nav = [
     { name: "Home", path: "/" },
     { name: "Templates", path: "/templates" },
     { name: "Blogs", path: "/blogs" },
     { name: "Contact", path: "/contact" },
     ...(isAdmin ? [{ name: "Admin", path: "/admin" }] : []),
   ];
-
-  const avatarName = user?.displayName || user?.email || "User";
-  const currentPath = location.pathname === "/" ? "/" : location.pathname.toLowerCase();
+  const current = location.pathname === "/" ? "/" : location.pathname.toLowerCase();
+  const initials = initialsOf(user?.displayName || user?.email);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/85 backdrop-blur-md border-b border-borderLight">
-      <div className="max-w-7xl mx-auto flex flex-row h-16 justify-between items-center px-4 sm:px-6 lg:px-8">
-        {/* Left */}
-        <div className="flex flex-row items-center gap-3">
-          <button className="block md:hidden" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
-            <Menu className="w-6 h-6 text-textHeading" />
+    <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur-md border-b border-ink">
+      <div className="max-w-[1320px] mx-auto h-[72px] px-5 sm:px-8 lg:px-12 flex items-center justify-between gap-6">
+        <div className="flex items-center gap-3.5">
+          <button className="md:hidden -ml-2 w-11 h-11 flex items-center justify-center" onClick={() => setMenuOpen(true)} aria-label="Open menu">
+            <Menu size={22} className="text-ink" />
           </button>
-          <img src={MainLogo} alt="SmartTemp" className="h-8 w-auto cursor-pointer" onClick={() => navigate("/")} />
+          <img
+            src={MainLogo}
+            alt="SmartTemp"
+            onClick={() => navigate("/")}
+            className="h-7 w-auto cursor-pointer [filter:brightness(0)_saturate(0)] opacity-90"
+          />
         </div>
 
-        {/* Center nav */}
-        <nav className="hidden md:flex flex-row gap-1 items-center">
-          {menuItems.map((item) => {
-            const isActive = currentPath === item.path;
+        <nav className="hidden md:flex items-center gap-8">
+          {nav.map((n) => {
+            const active = current === n.path;
             return (
               <button
-                key={item.name}
-                onClick={() => navigate(item.path)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  isActive ? "bg-lightBlue text-bluePrimary" : "text-textDark hover:text-bluePrimary hover:bg-background"
+                key={n.name}
+                onClick={() => navigate(n.path)}
+                className={`font-sans text-[15px] font-medium pb-1 border-b transition-colors ${
+                  active ? "text-ink border-ink" : "text-muted2 border-transparent hover:text-ink hover:border-line"
                 }`}
               >
-                {item.name}
+                {n.name}
               </button>
             );
           })}
         </nav>
 
-        {/* Right */}
-        <div className="flex flex-row gap-3 sm:gap-4 items-center">
-          <button className="relative cursor-pointer text-textDark hover:text-bluePrimary transition" onClick={() => navigate("/cart")} aria-label="Cart">
-            <ShoppingCart size={24} />
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate("/cart")}
+            aria-label="Cart"
+            className="relative w-11 h-11 rounded-full border border-line flex items-center justify-center hover:border-ink hover:-rotate-6 transition-all"
+          >
+            <ShoppingCart size={19} className="text-ink" />
             {count > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-bluePrimary text-white text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-terracotta text-paper font-mono text-[11px] font-semibold flex items-center justify-center">
                 {count}
               </span>
             )}
           </button>
 
           {user ? (
-            <div className="cursor-pointer" onClick={() => navigate("/profile")}>
-              <ProfileAvatar name={avatarName} />
-            </div>
+            <button
+              onClick={() => navigate("/profile")}
+              aria-label="Profile"
+              className="w-11 h-11 rounded-full bg-ink text-cream font-display italic text-[19px] flex items-center justify-center hover:bg-terracotta transition-colors"
+            >
+              {initials}
+            </button>
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="bg-bluePrimary text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-blueHover transition-all shadow-sm hover:shadow"
+              className="h-11 px-5 rounded-full bg-ink text-cream font-semibold text-[14px] hover:bg-terracotta transition-colors"
             >
               Sign in
             </button>
@@ -80,39 +97,34 @@ const Navbar = () => {
       </div>
 
       {/* Mobile drawer */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          <div className="bg-black/50 flex-1" onClick={() => setSidebarOpen(false)} />
-          <div className="bg-white w-[78vw] max-w-xs p-5 flex flex-col gap-2 animate-slideIn">
-            <div className="flex justify-between items-center mb-4">
-              <img src={MainLogo} alt="SmartTemp" className="h-7 w-auto" />
-              <button onClick={() => setSidebarOpen(false)} aria-label="Close menu">
-                <X className="w-6 h-6 text-textHeading" />
+      {menuOpen && (
+        <div className="fixed inset-0 z-[60] flex">
+          <div className="w-[86vw] max-w-[380px] bg-cream border-r border-ink px-6 py-5 flex flex-col gap-1.5 [animation:rise_.4s_both]">
+            <div className="flex justify-between items-center mb-7">
+              <img src={MainLogo} alt="SmartTemp" className="h-6 w-auto [filter:brightness(0)]" />
+              <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="w-11 h-11 flex items-center justify-center">
+                <X size={22} className="text-ink" />
               </button>
             </div>
-            {menuItems.map((item) => {
-              const isActive = currentPath === item.path;
-              return (
-                <button
-                  key={item.name}
-                  className={`text-left px-3 py-2.5 rounded-xl text-md font-medium transition-all ${
-                    isActive ? "bg-lightBlue text-bluePrimary" : "text-textDark hover:bg-background"
-                  }`}
-                  onClick={() => { setSidebarOpen(false); navigate(item.path); }}
-                >
-                  {item.name}
-                </button>
-              );
-            })}
+            {nav.map((n) => (
+              <button
+                key={n.name}
+                onClick={() => { setMenuOpen(false); navigate(n.path); }}
+                className="text-left border-b border-line py-3.5 font-display text-[34px] leading-none text-ink"
+              >
+                {n.name}
+              </button>
+            ))}
             {!user && (
               <button
-                onClick={() => { setSidebarOpen(false); navigate("/login"); }}
-                className="mt-2 bg-bluePrimary text-white font-semibold px-3 py-2.5 rounded-xl hover:bg-blueHover transition"
+                onClick={() => { setMenuOpen(false); navigate("/login"); }}
+                className="mt-5 h-[52px] py-3.5 rounded-full bg-ink text-cream font-semibold"
               >
                 Sign in
               </button>
             )}
           </div>
+          <div className="flex-1 bg-ink/45 animate-fadeIn" onClick={() => setMenuOpen(false)} />
         </div>
       )}
     </header>
