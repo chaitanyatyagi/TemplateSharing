@@ -47,7 +47,7 @@ const Admin = () => {
       <button
         onClick={onClick}
         className={`h-12 rounded-full px-4 flex gap-3 items-center text-[15px] font-medium text-left transition-all hover:pl-[22px] ${
-          active ? "bg-cream text-ink" : "bg-transparent text-[#BDB5A8] hover:text-cream"
+          active ? "bg-cream text-ink" : "bg-transparent text-[#B9BFD2] hover:text-cream"
         }`}
       >
         <Icon size={18} /> {item.name}

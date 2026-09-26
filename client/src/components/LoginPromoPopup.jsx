@@ -32,7 +32,7 @@ const LoginPromoPopup = () => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-ink/50" onClick={dismiss} />
-      <div className="relative w-full max-w-md bg-cream border border-ink shadow-[12px_12px_0_#B4532A] animate-rise">
+      <div className="relative w-full max-w-md bg-cream border border-ink shadow-[12px_12px_0_#22396F] animate-rise">
         <button onClick={dismiss} aria-label="Close" className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center text-muted2 hover:text-ink transition-colors">
           <X size={20} />
         </button>

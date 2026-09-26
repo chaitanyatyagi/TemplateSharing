@@ -32,18 +32,18 @@ export default {
         borderLight: "#E5E7EB",   // subtle border (inputs, dividers)
 
         // ---- Editorial direction (user-facing) ----
-        cream: "#F5F1EA",          // page canvas
-        paper: "#FBF8F3",          // raised card surface
-        creamAlt: "#EDE7DD",       // hatch / subtle band
-        hatch: "#E7E0D4",          // hatch stripe 2
-        ink: "#1C1A17",            // near-black — primary text & buttons
-        inkSoft: "#3A352E",        // softer ink for long-form body
-        bodytext: "#4A443C",       // standard body copy
-        muted2: "#6B645A",         // muted labels / meta
-        faint: "#8A8276",          // faint placeholders / captions
-        line: "#D9D1C4",           // soft divider on cream
-        terracotta: "#B4532A",     // accent
-        terracottaLight: "#E08A63",// accent on dark
+        cream: "#FCF1D0",          // page canvas
+        paper: "#FEF8E6",          // raised card surface
+        creamAlt: "#F2E4BC",       // hatch / subtle band
+        hatch: "#ECDCAC",          // hatch stripe 2
+        ink: "#010736",            // near-black — primary text & buttons
+        inkSoft: "#0D1C42",        // softer ink for long-form body
+        bodytext: "#2C3A5E",       // standard body copy
+        muted2: "#5B678A",         // muted labels / meta
+        faint: "#8A93AE",          // faint placeholders / captions
+        line: "#D8CB9E",           // soft divider on cream
+        terracotta: "#22396F",     // accent
+        terracottaLight: "#A9B6DD",// accent on dark
         successGreen: "#2F7D4F",
         likeRed: "#B3261E",
       },

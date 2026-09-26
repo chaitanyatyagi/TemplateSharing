@@ -94,7 +94,7 @@ const TemplateIndividual = () => {
         <div className="flex flex-wrap gap-8 md:gap-[72px] items-start">
           {/* Gallery */}
           <div className="flex-1 min-w-0 basis-[520px] flex flex-col gap-3.5 animate-rise">
-            <div className="aspect-[4/3] border border-ink overflow-hidden bg-[repeating-linear-gradient(135deg,#EDE7DD_0_10px,#E7E0D4_10px_20px)]">
+            <div className="aspect-[4/3] border border-ink overflow-hidden bg-[repeating-linear-gradient(135deg,#F2E4BC_0_10px,#ECDCAC_10px_20px)]">
               <img src={getTemplateImageUrl(gallery[active])} alt={template.name} className="w-full h-full object-cover"
                 onError={(e) => { e.currentTarget.style.opacity = 0; }} />
             </div>
@@ -127,7 +127,7 @@ const TemplateIndividual = () => {
                 </button>
               )}
               <button onClick={handleWish} aria-label="Wishlist" className="w-[58px] h-[58px] rounded-full border border-ink flex items-center justify-center hover:scale-[1.06] active:scale-90 transition-transform">
-                <Heart size={20} fill={wished ? "#B4532A" : "none"} color={wished ? "#B4532A" : "#1C1A17"} />
+                <Heart size={20} fill={wished ? "#22396F" : "none"} color={wished ? "#22396F" : "#010736"} />
               </button>
             </div>
             <div className="flex flex-col gap-2.5 text-sm text-bodytext">

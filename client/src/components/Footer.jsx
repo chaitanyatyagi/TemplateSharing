@@ -18,10 +18,10 @@ const Footer = () => {
           Made for <em className="text-terracottaLight not-italic font-display italic">productive</em> people.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1.2fr] gap-10 border-t border-[#3A352E] pt-10 mt-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1.2fr] gap-10 border-t border-[#0D1C42] pt-10 mt-14">
           <div className="flex flex-col gap-3.5">
             <img src={MainLogo} alt="SmartTemp" className="h-6 w-auto self-start [filter:brightness(0)_invert(1)]" />
-            <p className="max-w-[320px] text-sm text-[#BDB5A8]">
+            <p className="max-w-[320px] text-sm text-[#B9BFD2]">
               Ready-to-use productivity templates and sharp guides to help ambitious teams and
               professionals do their best work — faster.
             </p>
@@ -34,7 +34,7 @@ const Footer = () => {
                 <button
                   key={l.name}
                   onClick={() => navigate(l.path)}
-                  className="text-[15px] text-[#E4DCCF] hover:text-terracottaLight hover:translate-x-1 transition-all"
+                  className="text-[15px] text-[#EBDCA8] hover:text-terracottaLight hover:translate-x-1 transition-all"
                 >
                   {l.name}
                 </button>
@@ -44,7 +44,7 @@ const Footer = () => {
 
           <div>
             <div className="font-mono text-[11px] font-medium tracking-[.1em] text-faint mb-4">STAY IN THE LOOP</div>
-            <p className="text-sm text-[#BDB5A8] mb-3.5">Fresh templates and guides in your inbox. No spam.</p>
+            <p className="text-sm text-[#B9BFD2] mb-3.5">Fresh templates and guides in your inbox. No spam.</p>
             <form className="flex gap-2 border-b border-muted2" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="email"

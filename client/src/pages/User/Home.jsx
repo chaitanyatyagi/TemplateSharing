@@ -50,7 +50,7 @@ const BlogRow = ({ blog, num }) => {
           <Heart size={16} fill={liked ? "#B3261E" : "none"} color={liked ? "#B3261E" : "currentColor"} />{likes}
         </button>
         <button onClick={save} aria-label="Save" className="w-10 h-10 border border-line rounded-full flex items-center justify-center hover:border-ink transition-colors active:scale-90">
-          <Bookmark size={16} fill={saved ? "#1C1A17" : "none"} color="#1C1A17" />
+          <Bookmark size={16} fill={saved ? "#010736" : "none"} color="#010736" />
         </button>
       </div>
     </article>
@@ -120,7 +120,7 @@ const Home = () => {
           </div>
         </div>
         <figure className="flex-1 min-w-0 basis-[380px] m-0 flex flex-col gap-3 [animation:rise_.9s_.15s_both]">
-          <div className="bg-paper border border-ink p-5 sm:p-8 shadow-[10px_10px_0_#E4DCCF] hover:shadow-[16px_16px_0_#B4532A] hover:-rotate-1 hover:-translate-y-1 transition-all duration-500">
+          <div className="bg-paper border border-ink p-5 sm:p-8 shadow-[10px_10px_0_#EBDCA8] hover:shadow-[16px_16px_0_#22396F] hover:-rotate-1 hover:-translate-y-1 transition-all duration-500">
             <img src={Home1} alt="Productivity templates" className="w-full block" />
           </div>
           <figcaption className="font-mono text-[12px] text-muted2 tracking-[.04em]">FIG. 01 — A template, ready to ship</figcaption>
@@ -159,7 +159,7 @@ const Home = () => {
           <div className="flex-1 basis-[420px]">
             <div className="font-mono text-[12px] font-medium tracking-[.08em] text-terracottaLight mb-4">THE NEWSLETTER</div>
             <h3 className="font-display text-[clamp(36px,4.4vw,60px)] leading-none m-0">Get productivity tips <em className="text-cream">in your inbox</em></h3>
-            <p className="text-[#BDB5A8] mt-4 m-0">Fresh templates and guides, no spam. Unsubscribe anytime.</p>
+            <p className="text-[#B9BFD2] mt-4 m-0">Fresh templates and guides, no spam. Unsubscribe anytime.</p>
           </div>
           <form onSubmit={(e) => e.preventDefault()} className="flex-1 basis-[360px] flex flex-wrap gap-3 items-stretch">
             <input type="email" placeholder="Enter your email" className="flex-1 basis-[220px] h-14 bg-transparent border-b border-muted2 text-cream placeholder-faint text-[18px] outline-none focus:border-terracottaLight transition-colors" />
