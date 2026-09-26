@@ -96,25 +96,25 @@ const Template = () => {
       {
         activeMenu === "Template" ? (
           <>
-            <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center mt-8 shadow-sm p-4 rounded-md bg-white font-inter">Template Management</div>
+            <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center mt-8 shadow-sm p-4 rounded-md bg-paper">Template Management</div>
             {error && (
-              <div className="mt-4 p-3 bg-redAccent/10 text-redAccent rounded-md text-sm">{error}</div>
+              <div className="mt-4 p-3 bg-[#F4DEDA] text-likeRed rounded-md text-sm">{error}</div>
             )}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 shadow-sm p-2 rounded-md bg-white font-inter relative">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 shadow-sm p-2 rounded-md bg-paper relative">
               {/* Left: Dropdown + Search */}
               <div className="flex flex-row gap-4 justify-start items-center w-full sm:w-auto">
                 {/* Dropdown */}
                 <div className="relative">
                   <div
-                    className="flex items-center justify-between border border-borderLight rounded-md px-3 py-2 w-[150px] cursor-pointer hover:border-border transition"
+                    className="flex items-center justify-between border border-line rounded-md px-3 py-2 w-[150px] cursor-pointer hover:border-ink transition"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    <span className="text-sm text-textDark font-inter">
+                    <span className="text-sm text-ink">
                       {selectedCategory}
                     </span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`h-4 w-4 text-textMuted transform transition-transform ${isDropdownOpen ? "rotate-180" : "rotate-0"
+                      className={`h-4 w-4 text-muted2 transform transition-transform ${isDropdownOpen ? "rotate-180" : "rotate-0"
                         }`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -129,12 +129,12 @@ const Template = () => {
 
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-borderLight rounded-md shadow-md">
+                    <div className="absolute z-10 mt-1 w-full bg-paper border border-line rounded-md shadow-md">
                       {categories.map((cat, idx) => (
                         <div
                           key={idx}
                           onClick={() => handleSelect(cat)}
-                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-lightBlue ${selectedCategory === cat ? "text-bluePrimary font-semibold" : "text-textDark"
+                          className={`px-3 py-2 text-sm cursor-pointer hover:bg-creamAlt ${selectedCategory === cat ? "text-terracotta font-semibold" : "text-ink"
                             }`}
                         >
                           {cat}
@@ -145,10 +145,10 @@ const Template = () => {
                 </div>
 
                 {/* Search box */}
-                <div className="flex items-center border border-borderLight rounded-md px-3 py-2 w-full sm:w-[250px]">
+                <div className="flex items-center border border-line rounded-md px-3 py-2 w-full sm:w-[250px]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-grayLight"
+                    className="h-4 w-4 text-faint"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -165,14 +165,14 @@ const Template = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search templates..."
-                    className="ml-2 w-full outline-none text-sm font-inter placeholder-gray-400"
+                    className="ml-2 w-full outline-none text-sm placeholder-faint"
                   />
                 </div>
               </div>
 
               {/* Right: Button */}
               <div
-                className="bg-bluePrimary text-white text-sm font-inter rounded-md px-4 py-2 mt-3 sm:mt-0 cursor-pointer hover:bg-blueHover transition"
+                className="bg-ink text-white text-sm rounded-md px-4 py-2 mt-3 sm:mt-0 cursor-pointer hover:bg-terracotta transition"
                 onClick={() => setActiveMenu("Add Template")}
               >
                 + New Template

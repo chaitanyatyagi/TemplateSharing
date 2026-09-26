@@ -71,46 +71,46 @@ const Order = () => {
   return (
   <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
     {error && (
-      <div className="mb-4 p-3 bg-redAccent/10 text-redAccent rounded-md text-sm">{error}</div>
+      <div className="mb-4 p-3 bg-[#F4DEDA] text-likeRed rounded-md text-sm">{error}</div>
     )}
     {/* ======= Top Stats Cards ======= */}
     <div className="flex flex-col sm:flex-row flex-wrap justify-between items-stretch gap-4">
       {/* Card 1: Orders */}
-      <div className="flex flex-row justify-between items-center border-2 border-border rounded-md min-w-[250px] sm:min-w-[230px] min-h-[110px] p-4 flex-1 bg-white shadow-sm">
+      <div className="flex flex-row justify-between items-center border-2 border-ink rounded-md min-w-[250px] sm:min-w-[230px] min-h-[110px] p-4 flex-1 bg-paper shadow-sm">
         <div className="flex flex-col gap-2 px-2 flex-grow">
-          <p className="text-border text-sm font-inter">Total Orders</p>
+          <p className="text-muted2 text-sm">Total Orders</p>
           <div className="flex flex-row gap-2 items-center">
             <img src={OrderIcon} alt="Order" className="w-5 h-5" />
-            <p className="text-textDark text-lg font-semi font-inter">{summary.totalOrders}</p>
+            <p className="text-ink text-lg font-semi">{summary.totalOrders}</p>
           </div>
         </div>
-        <div className="hidden sm:block min-h-[80px] border-r-2 border-border mx-2"></div>
+        <div className="hidden sm:block min-h-[80px] border-r-2 border-ink mx-2"></div>
         <div className="flex flex-col gap-2 px-2 text-right">
-          <p className="text-border text-sm font-inter">Monthly Orders</p>
-          <p className="text-textDark text-lg font-semi font-inter">{summary.monthlyOrders}</p>
+          <p className="text-muted2 text-sm">Monthly Orders</p>
+          <p className="text-ink text-lg font-semi">{summary.monthlyOrders}</p>
         </div>
       </div>
 
       {/* Card 2: Amount */}
-      <div className="flex flex-row justify-between items-center border-2 border-border rounded-md min-w-[250px] sm:min-w-[230px] min-h-[110px] p-4 flex-1 bg-white shadow-sm">
+      <div className="flex flex-row justify-between items-center border-2 border-ink rounded-md min-w-[250px] sm:min-w-[230px] min-h-[110px] p-4 flex-1 bg-paper shadow-sm">
         <div className="flex flex-col gap-2 px-2 flex-grow">
-          <p className="text-border text-sm font-inter">Total Amount</p>
+          <p className="text-muted2 text-sm">Total Amount</p>
           <div className="flex flex-row gap-2 items-center">
             <img src={Amount} alt="Amount" className="w-5 h-5" />
-            <p className="text-textDark text-lg font-semi font-inter">Rs {summary.totalAmount}</p>
+            <p className="text-ink text-lg font-semi">Rs {summary.totalAmount}</p>
           </div>
         </div>
-        <div className="hidden sm:block min-h-[80px] border-r-2 border-border mx-2"></div>
+        <div className="hidden sm:block min-h-[80px] border-r-2 border-ink mx-2"></div>
         <div className="flex flex-col gap-2 px-2 text-right">
-          <p className="text-border text-sm font-inter">Monthly Amount</p>
-          <p className="text-textDark text-lg font-semi font-inter">Rs {summary.monthlyAmount}</p>
+          <p className="text-muted2 text-sm">Monthly Amount</p>
+          <p className="text-ink text-lg font-semi">Rs {summary.monthlyAmount}</p>
         </div>
       </div>
     </div>
 
     {/* ======= Header Row (Recent Orders Section) ======= */}
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 shadow-sm p-4 rounded-md bg-white">
-      <p className="text-textMuted font-inter font-semibold text-base mb-2 sm:mb-0">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 shadow-sm p-4 rounded-md bg-paper">
+      <p className="text-muted2 font-semibold text-base mb-2 sm:mb-0">
         Recent Orders
       </p>
     </div>

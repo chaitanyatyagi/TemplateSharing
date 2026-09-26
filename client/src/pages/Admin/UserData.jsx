@@ -47,14 +47,14 @@ const UserData = () => {
   return (
   <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
     {/* ======= Header Row (Recent UserDatas Section) ======= */}
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 shadow-sm p-4 rounded-md bg-white">
-      <p className="text-textMuted font-inter font-semibold text-base mb-2 sm:mb-0">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-8 shadow-sm p-4 rounded-md bg-paper">
+      <p className="text-muted2 font-semibold text-base mb-2 sm:mb-0">
         User's Data
       </p>
     </div>
 
     {error && (
-      <div className="mt-4 p-3 bg-redAccent/10 text-redAccent rounded-md text-sm">{error}</div>
+      <div className="mt-4 p-3 bg-[#F4DEDA] text-likeRed rounded-md text-sm">{error}</div>
     )}
 
     {/* ======= Responsive Table ======= */}

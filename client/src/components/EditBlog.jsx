@@ -131,18 +131,18 @@ const EditBlog = ({ setActiveMenu }) => {
 
   if (loading && !formData.name) {
     return (
-      <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto font-inter">
-        <div className="mt-4 p-4 bg-lightBlue text-bluePrimary rounded-md">Loading blog data...</div>
+      <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
+        <div className="mt-4 p-4 bg-creamAlt text-terracotta rounded-md">Loading blog data...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto font-inter">
+    <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
       {/* Top Bar */}
-      <div className="w-full bg-bluePrimary text-white flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 py-3 rounded-t-md">
+      <div className="w-full bg-ink text-white flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 py-3 rounded-t-md">
         <button
-          className="flex items-center gap-2 text-white hover:text-gray-200 transition"
+          className="flex items-center gap-2 text-white hover:text-line transition"
           onClick={handleCancel}
           disabled={loading}
         >
@@ -152,7 +152,7 @@ const EditBlog = ({ setActiveMenu }) => {
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <button
             type="button"
-            className="flex items-center gap-2 bg-white/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-white/20 transition"
+            className="flex items-center gap-2 bg-paper/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-paper/20 transition"
             onClick={() => setPreview((p) => !p)}
             disabled={loading}
           >
@@ -161,7 +161,7 @@ const EditBlog = ({ setActiveMenu }) => {
           </button>
           <button
             type="button"
-            className="flex items-center gap-2 bg-white/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-white/20 transition"
+            className="flex items-center gap-2 bg-paper/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-paper/20 transition"
             onClick={() => handleSubmit("draft")}
             disabled={loading}
           >
@@ -169,14 +169,14 @@ const EditBlog = ({ setActiveMenu }) => {
           </button>
           <button
             type="button"
-            className="flex items-center gap-2 bg-white text-bluePrimary px-3 py-1.5 rounded-md hover:bg-lightBlue transition"
+            className="flex items-center gap-2 bg-paper text-terracotta px-3 py-1.5 rounded-md hover:bg-creamAlt transition"
             onClick={() => handleSubmit("published")}
             disabled={loading}
           >
             <CheckCircle2 size={16} /> <span>{loading ? "Saving..." : "Publish"}</span>
           </button>
           <button
-            className="flex items-center gap-2 bg-white text-red-500 px-3 py-1.5 rounded-md hover:bg-red-50 transition"
+            className="flex items-center gap-2 bg-paper text-likeRed px-3 py-1.5 rounded-md hover:bg-[#F4DEDA] transition"
             onClick={handleCancel}
             disabled={loading}
           >
@@ -185,52 +185,52 @@ const EditBlog = ({ setActiveMenu }) => {
         </div>
       </div>
 
-      {success && <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-md">{success}</div>}
-      {error && <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">{error}</div>}
+      {success && <div className="mt-4 p-4 bg-[#E3EEE5] text-successGreen rounded-md">{success}</div>}
+      {error && <div className="mt-4 p-4 bg-[#F4DEDA] text-likeRed rounded-md">{error}</div>}
 
       {preview ? (
-        <div className="mt-6 bg-white rounded-lg shadow-sm border border-border p-6">
+        <div className="mt-6 bg-paper rounded-lg shadow-sm border border-ink p-6">
           <div className="w-full max-w-3xl mx-auto flex flex-col gap-4">
             {imageSrc && (
               <img src={imageSrc} alt="cover" className="w-full h-[300px] object-cover rounded-lg" />
             )}
-            <h1 className="text-2xl md:text-3xl font-semibold text-textHeading">
+            <h1 className="text-2xl md:text-3xl font-semibold text-ink">
               {formData.name || "Untitled blog"}
             </h1>
             {formData.type && (
-              <span className="inline-block w-max bg-lightBlue text-bluePrimary text-sm font-medium px-3 py-1 rounded-lg capitalize">
+              <span className="inline-block w-max bg-creamAlt text-terracotta text-sm font-medium px-3 py-1 rounded-lg capitalize">
                 {formData.type}
               </span>
             )}
             {isEmptyHtml(formData.content) ? (
-              <p className="text-grayLight">No content yet.</p>
+              <p className="text-faint">No content yet.</p>
             ) : (
               <BlogContent html={formData.content} />
             )}
           </div>
         </div>
       ) : (
-        <div className="flex flex-col lg:flex-row gap-6 mt-6 bg-white rounded-lg shadow-sm border border-border p-6">
+        <div className="flex flex-col lg:flex-row gap-6 mt-6 bg-paper rounded-lg shadow-sm border border-ink p-6">
           <div className="flex-1 flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Title</label>
+              <label className="text-ink font-semibold">Title</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="Enter blog title"
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta"
               />
             </div>
 
             <div className="flex flex-col gap-2 sm:max-w-xs">
-              <label className="text-textDark font-semibold">Category</label>
+              <label className="text-ink font-semibold">Category</label>
               <select
                 name="type"
                 value={formData.type}
                 onChange={handleInputChange}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary capitalize"
+                className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta capitalize"
               >
                 <option value="">Select category</option>
                 {CATEGORIES.map((c) => (
@@ -240,15 +240,15 @@ const EditBlog = ({ setActiveMenu }) => {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Content</label>
+              <label className="text-ink font-semibold">Content</label>
               <RichTextEditor value={formData.content} onChange={handleContentChange} />
             </div>
           </div>
 
           <div className="lg:w-1/3 flex flex-col gap-3">
-            <label className="text-textDark font-semibold">Cover Image</label>
+            <label className="text-ink font-semibold">Cover Image</label>
             <div
-              className="relative w-full min-h-56 border-2 border-dashed border-border bg-gray-50 rounded-md flex flex-col items-center justify-center text-grayLight text-sm text-center px-3 py-6 cursor-pointer hover:bg-gray-100 transition"
+              className="relative w-full min-h-56 border-2 border-dashed border-ink bg-cream rounded-md flex flex-col items-center justify-center text-faint text-sm text-center px-3 py-6 cursor-pointer hover:bg-creamAlt transition"
               onClick={() => document.getElementById("edit-blog-image-upload").click()}
             >
               {imageSrc ? (
@@ -260,9 +260,9 @@ const EditBlog = ({ setActiveMenu }) => {
                 </>
               ) : (
                 <>
-                  <UploadCloud className="mb-2 text-grayLight" size={30} />
+                  <UploadCloud className="mb-2 text-faint" size={30} />
                   <p className="font-medium">Click to upload cover image</p>
-                  <p className="text-xs text-gray-500">(JPG, PNG, WebP - Max 10MB)</p>
+                  <p className="text-xs text-muted2">(JPG, PNG, WebP - Max 10MB)</p>
                 </>
               )}
               <input

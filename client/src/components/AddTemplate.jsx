@@ -135,12 +135,12 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto font-inter">
+    <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
       {/* Top Bar */}
-      <div className="w-full bg-bluePrimary text-white flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 rounded-t-md">
+      <div className="w-full bg-ink text-white flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 rounded-t-md">
         <div className="flex items-center gap-3">
           <button
-            className="flex items-center gap-2 text-white hover:text-gray-200 transition"
+            className="flex items-center gap-2 text-white hover:text-line transition"
             onClick={handleCancel}
             disabled={loading}
           >
@@ -151,7 +151,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="flex items-center gap-2 bg-white/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-white/20 transition"
+            className="flex items-center gap-2 bg-paper/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-paper/20 transition"
             onClick={() => handleSubmit("draft")}
             disabled={loading}
           >
@@ -159,7 +159,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
           </button>
           <button
             type="button"
-            className="flex items-center gap-2 bg-white text-bluePrimary px-3 py-1.5 rounded-md hover:bg-lightBlue transition"
+            className="flex items-center gap-2 bg-paper text-terracotta px-3 py-1.5 rounded-md hover:bg-creamAlt transition"
             onClick={() => handleSubmit("published")}
             disabled={loading}
           >
@@ -167,7 +167,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
           </button>
           <button
             type="button"
-            className="flex items-center gap-2 bg-white text-red-500 px-3 py-1.5 rounded-md hover:bg-red-50 transition"
+            className="flex items-center gap-2 bg-paper text-likeRed px-3 py-1.5 rounded-md hover:bg-[#F4DEDA] transition"
             onClick={handleCancel}
             disabled={loading}
           >
@@ -177,49 +177,49 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
       </div>
 
       {success && (
-        <div className="mt-4 p-4 bg-green-100 text-green-700 rounded-md">{success}</div>
+        <div className="mt-4 p-4 bg-[#E3EEE5] text-successGreen rounded-md">{success}</div>
       )}
       {error && (
-        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-md">{error}</div>
+        <div className="mt-4 p-4 bg-[#F4DEDA] text-likeRed rounded-md">{error}</div>
       )}
 
-      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col lg:flex-row gap-6 mt-6 bg-white rounded-lg shadow-sm border border-border p-6">
+      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col lg:flex-row gap-6 mt-6 bg-paper rounded-lg shadow-sm border border-ink p-6">
         {/* Left Section */}
         <div className="flex-1 flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Title</label>
+            <label className="text-ink font-semibold">Title</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               placeholder="Template title (shown on the card and detail page)"
-              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+              className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta"
               required
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Card Description</label>
+            <label className="text-ink font-semibold">Card Description</label>
             <textarea
               name="card_content"
               value={formData.card_content}
               onChange={handleInputChange}
               rows="2"
               placeholder="Short blurb shown on the card"
-              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary resize-none"
+              className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta resize-none"
               required
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Type</label>
+              <label className="text-ink font-semibold">Type</label>
               <select
                 name="template_type"
                 value={formData.template_type}
                 onChange={handleInputChange}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta"
                 required
               >
                 <option value="paid">Paid</option>
@@ -227,7 +227,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
               </select>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Price (₹)</label>
+              <label className="text-ink font-semibold">Price (₹)</label>
               <input
                 type="number"
                 name="price"
@@ -236,76 +236,76 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
                 onChange={handleInputChange}
                 disabled={isFree}
                 placeholder={isFree ? "Free" : "Enter price"}
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta disabled:opacity-60 disabled:cursor-not-allowed"
               />
               {isFree && (
-                <p className="text-xs text-grayLight">Free templates are automatically priced ₹0.</p>
+                <p className="text-xs text-faint">Free templates are automatically priced ₹0.</p>
               )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Category</label>
+              <label className="text-ink font-semibold">Category</label>
               <input
                 type="text"
                 name="template_category"
                 value={formData.template_category}
                 onChange={handleInputChange}
                 placeholder="e.g. finance, portfolio, business"
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta"
                 required
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-textDark font-semibold">Subcategory</label>
+              <label className="text-ink font-semibold">Subcategory</label>
               <input
                 type="text"
                 name="template_subcategory"
                 value={formData.template_subcategory}
                 onChange={handleInputChange}
                 placeholder="e.g. dashboard, resume"
-                className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+                className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta"
                 required
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Tags</label>
+            <label className="text-ink font-semibold">Tags</label>
             <input
               type="text"
               name="template_tags"
               value={formData.template_tags}
               onChange={handleInputChange}
               placeholder="Comma separated, e.g. notion, planner, ai"
-              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+              className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta"
               required
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Full Description</label>
+            <label className="text-ink font-semibold">Full Description</label>
             <textarea
               name="template_description"
               value={formData.template_description}
               onChange={handleInputChange}
               rows="4"
               placeholder="Detailed description shown on the detail page"
-              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary resize-none"
+              className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta resize-none"
               required
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Template Content</label>
+            <label className="text-ink font-semibold">Template Content</label>
             <textarea
               name="template_content"
               value={formData.template_content}
               onChange={handleInputChange}
               rows="4"
               placeholder="What's included, how it works, etc."
-              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary resize-none"
+              className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta resize-none"
               required
             />
           </div>
@@ -315,9 +315,9 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
         <div className="lg:w-1/3 flex flex-col gap-5">
           {/* Card Image */}
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Card Image</label>
+            <label className="text-ink font-semibold">Card Image</label>
             <div
-              className="w-full min-h-40 border-2 border-dashed border-border bg-gray-50 rounded-md flex flex-col items-center justify-center text-grayLight text-sm text-center px-3 py-6 cursor-pointer hover:bg-gray-100 transition"
+              className="w-full min-h-40 border-2 border-dashed border-ink bg-cream rounded-md flex flex-col items-center justify-center text-faint text-sm text-center px-3 py-6 cursor-pointer hover:bg-creamAlt transition"
               onClick={() => document.getElementById("template-card-image-upload").click()}
             >
               {cardImage ? (
@@ -328,7 +328,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
                 />
               ) : (
                 <>
-                  <UploadCloud className="mb-2 text-grayLight" size={26} />
+                  <UploadCloud className="mb-2 text-faint" size={26} />
                   <p className="font-medium">Click to upload card image</p>
                 </>
               )}
@@ -344,14 +344,14 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
 
           {/* Template Images */}
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">
+            <label className="text-ink font-semibold">
               Template Images ({templateImages.length}/5)
             </label>
             <div
-              className="w-full min-h-24 border-2 border-dashed border-border bg-gray-50 rounded-md flex flex-col items-center justify-center text-grayLight text-sm text-center px-3 py-4 cursor-pointer hover:bg-gray-100 transition"
+              className="w-full min-h-24 border-2 border-dashed border-ink bg-cream rounded-md flex flex-col items-center justify-center text-faint text-sm text-center px-3 py-4 cursor-pointer hover:bg-creamAlt transition"
               onClick={() => document.getElementById("template-images-upload").click()}
             >
-              <UploadCloud className="mb-2 text-grayLight" size={26} />
+              <UploadCloud className="mb-2 text-faint" size={26} />
               <p className="font-medium">Click to upload (up to 5)</p>
               <input
                 id="template-images-upload"
@@ -365,7 +365,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
             {templateImages.length > 0 && (
               <div className="grid grid-cols-3 gap-2 mt-1">
                 {templateImages.map((file, idx) => (
-                  <div key={idx} className="relative group rounded-md overflow-hidden border border-border">
+                  <div key={idx} className="relative group rounded-md overflow-hidden border border-ink">
                     <img
                       src={URL.createObjectURL(file)}
                       alt={`preview-${idx}`}
@@ -386,19 +386,19 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
 
           {/* Deliverable File — what the buyer downloads / gets emailed */}
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Deliverable File</label>
+            <label className="text-ink font-semibold">Deliverable File</label>
             <div
-              className="w-full min-h-24 border-2 border-dashed border-border bg-gray-50 rounded-md flex flex-col items-center justify-center text-grayLight text-sm text-center px-3 py-4 cursor-pointer hover:bg-gray-100 transition"
+              className="w-full min-h-24 border-2 border-dashed border-ink bg-cream rounded-md flex flex-col items-center justify-center text-faint text-sm text-center px-3 py-4 cursor-pointer hover:bg-creamAlt transition"
               onClick={() => document.getElementById("template-file-upload").click()}
             >
               {templateFile ? (
-                <div className="flex items-center gap-2 text-textDark">
-                  <FileText size={20} className="text-bluePrimary" />
+                <div className="flex items-center gap-2 text-ink">
+                  <FileText size={20} className="text-terracotta" />
                   <span className="font-medium break-all">{templateFile.name}</span>
                 </div>
               ) : (
                 <>
-                  <UploadCloud className="mb-2 text-grayLight" size={26} />
+                  <UploadCloud className="mb-2 text-faint" size={26} />
                   <p className="font-medium">Excel, PDF, Word, Figma export, ZIP…</p>
                 </>
               )}
@@ -414,7 +414,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
               <button
                 type="button"
                 onClick={() => setTemplateFile(null)}
-                className="text-xs text-redAccent self-start"
+                className="text-xs text-likeRed self-start"
               >
                 Remove file
               </button>
@@ -423,16 +423,16 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
 
           {/* Or a link (e.g. Figma) */}
           <div className="flex flex-col gap-2">
-            <label className="text-textDark font-semibold">Or Download Link</label>
+            <label className="text-ink font-semibold">Or Download Link</label>
             <input
               type="text"
               name="template_link"
               value={formData.template_link}
               onChange={handleInputChange}
               placeholder="e.g. Figma share link (optional if a file is uploaded)"
-              className="w-full border border-border bg-gray-50 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-bluePrimary"
+              className="w-full border border-ink bg-cream px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-terracotta"
             />
-            <p className="text-xs text-grayLight">
+            <p className="text-xs text-faint">
               Provide a file, a link, or both. The buyer receives these on purchase and from their profile.
             </p>
           </div>
