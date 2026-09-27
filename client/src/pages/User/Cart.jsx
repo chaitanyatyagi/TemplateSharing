@@ -121,7 +121,7 @@ const Cart = () => {
           <div className="flex-[2_1_520px] min-w-0">
             {items.map((item) => (
               <div key={item.templateId} className="flex flex-wrap gap-5 py-7 border-b border-line">
-                <div onClick={() => navigate(`/templates/${item.templateId}`)} className="w-[132px] aspect-[4/3] border border-line overflow-hidden cursor-pointer shrink-0 bg-[repeating-linear-gradient(135deg,#F2F2F4_0_7px,#E7E7EB_7px_14px)]">
+                <div onClick={() => navigate(`/templates/${item.templateId}`)} className="w-[132px] aspect-[4/3] border border-line overflow-hidden cursor-pointer shrink-0 bg-[repeating-linear-gradient(135deg,#14213D0D_0_7px,#14213D14_7px_14px)]">
                   {item.image && <img src={item.image} alt={item.title} className="w-full h-full object-cover" />}
                 </div>
                 <div className="flex-1 basis-[240px] min-w-0 flex flex-col gap-3.5">

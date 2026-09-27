@@ -34,14 +34,14 @@ export default {
         // ---- Editorial direction (user-facing) ----
         cream: "#FFFFFF",          // page canvas
         paper: "#FFFFFF",          // raised card surface
-        creamAlt: "#F2F2F4",       // hatch / subtle band
-        hatch: "#E7E7EB",          // hatch stripe 2
+        creamAlt: "#14213D0D",       // hatch / subtle band
+        hatch: "#14213D14",          // hatch stripe 2
         ink: "#14213D",            // near-black — primary text & buttons
-        inkSoft: "#2B3752",        // softer ink for long-form body
-        bodytext: "#3D4356",       // standard body copy
-        muted2: "#6B7280",         // muted labels / meta
-        faint: "#9AA0AE",          // faint placeholders / captions
-        line: "#E5E5E5",           // soft divider on cream
+        inkSoft: "#14213D",        // softer ink for long-form body
+        bodytext: "#14213D",       // standard body copy
+        muted2: "#14213D99",         // muted labels / meta
+        faint: "#14213D66",          // faint placeholders / captions
+        line: "#14213D1F",           // soft divider on cream
         terracotta: "#FCA311",     // accent
         terracottaLight: "#FCA311",// accent on dark
         successGreen: "#2F7D4F",

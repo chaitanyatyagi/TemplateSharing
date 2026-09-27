@@ -94,7 +94,7 @@ const TemplateIndividual = () => {
         <div className="flex flex-wrap gap-8 md:gap-[72px] items-start">
           {/* Gallery */}
           <div className="flex-1 min-w-0 basis-[520px] flex flex-col gap-3.5 animate-rise">
-            <div className="aspect-[4/3] border border-ink overflow-hidden bg-[repeating-linear-gradient(135deg,#F2F2F4_0_10px,#E7E7EB_10px_20px)]">
+            <div className="aspect-[4/3] border border-ink overflow-hidden bg-[repeating-linear-gradient(135deg,#14213D0D_0_10px,#14213D14_10px_20px)]">
               <img src={getTemplateImageUrl(gallery[active])} alt={template.name} className="w-full h-full object-cover"
                 onError={(e) => { e.currentTarget.style.opacity = 0; }} />
             </div>

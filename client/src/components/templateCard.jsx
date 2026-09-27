@@ -47,7 +47,7 @@ const TemplateCard = ({
       {/* Image */}
       <div
         onClick={() => navigate(`/templates/${id}`)}
-        className="relative aspect-[4/3] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(135deg,#F2F2F4_0_9px,#E7E7EB_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
+        className="relative aspect-[4/3] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(135deg,#14213D0D_0_9px,#14213D14_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
       >
         {image ? (
           <img

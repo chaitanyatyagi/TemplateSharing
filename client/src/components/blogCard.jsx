@@ -75,7 +75,7 @@ const Card = ({
     <article className="flex flex-col gap-3 group">
       <div
         onClick={() => navigate(`/blogs/${id}`)}
-        className="relative aspect-[3/2] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(45deg,#F2F2F4_0_9px,#E7E7EB_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
+        className="relative aspect-[3/2] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(45deg,#14213D0D_0_9px,#14213D14_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
       >
         {useOptimizedLoading ? (
           <img
