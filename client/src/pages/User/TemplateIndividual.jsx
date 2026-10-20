@@ -52,7 +52,7 @@ const TemplateIndividual = () => {
       <div className="min-h-screen flex flex-col bg-cream text-ink">
         <Navbar />
         <div className="flex-1 max-w-[1320px] w-full mx-auto px-5 sm:px-8 py-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="aspect-[4/3] border border-line bg-creamAlt animate-pulse" />
+          <div className="aspect-[4/3] rounded-2xl border border-line bg-creamAlt animate-pulse" />
           <div className="flex flex-col gap-4">
             <div className="h-8 w-2/3 bg-creamAlt animate-pulse" />
             <div className="h-16 w-1/3 bg-creamAlt animate-pulse" />
@@ -94,7 +94,7 @@ const TemplateIndividual = () => {
         <div className="flex flex-wrap gap-8 md:gap-[72px] items-start">
           {/* Gallery */}
           <div className="flex-1 min-w-0 basis-[520px] flex flex-col gap-3.5 animate-rise">
-            <div className="aspect-[4/3] border border-ink overflow-hidden bg-[repeating-linear-gradient(135deg,#14213D0D_0_10px,#14213D14_10px_20px)]">
+            <div className="aspect-[4/3] rounded-2xl border border-ink overflow-hidden bg-[repeating-linear-gradient(135deg,#EEF1F7_0_10px,#E6EAF2_10px_20px)]">
               <img src={getTemplateImageUrl(gallery[active])} alt={template.name} className="w-full h-full object-cover"
                 onError={(e) => { e.currentTarget.style.opacity = 0; }} />
             </div>
@@ -102,7 +102,7 @@ const TemplateIndividual = () => {
               <div className="flex gap-2.5">
                 {gallery.map((img, i) => (
                   <button key={i} onClick={() => setActive(i)}
-                    className={`w-[84px] h-[84px] border overflow-hidden ${active === i ? "border-ink" : "border-line opacity-70 hover:opacity-100"} transition-all`}>
+                    className={`w-[84px] h-[84px] rounded-xl border overflow-hidden ${active === i ? "border-ink" : "border-line opacity-70 hover:opacity-100"} transition-all`}>
                     <img src={getTemplateImageUrl(img)} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -122,12 +122,12 @@ const TemplateIndividual = () => {
               {added ? (
                 <div className="flex-1 h-[58px] rounded-full border border-successGreen text-successGreen font-semibold text-[16px] flex items-center justify-center gap-2.5"><Check size={18} /> Added to cart</div>
               ) : (
-                <button onClick={handleAdd} className="flex-1 h-[58px] rounded-full bg-ink text-cream font-semibold text-[16px] flex items-center justify-center gap-2.5 hover:bg-terracotta active:scale-[.98] transition-all">
+                <button onClick={handleAdd} className="flex-1 h-[58px] rounded-full bg-terracotta text-cream font-semibold text-[16px] flex items-center justify-center gap-2.5 hover:bg-ink active:scale-[.98] transition-all">
                   <ShoppingCart size={18} /> Add to cart
                 </button>
               )}
               <button onClick={handleWish} aria-label="Wishlist" className="w-[58px] h-[58px] rounded-full border border-ink flex items-center justify-center hover:scale-[1.06] active:scale-90 transition-transform">
-                <Heart size={20} fill={wished ? "#FCA311" : "none"} color={wished ? "#FCA311" : "#14213D"} />
+                <Heart size={20} fill={wished ? "#2344D0" : "none"} color={wished ? "#2344D0" : "#0E1A3A"} />
               </button>
             </div>
             <div className="flex flex-col gap-2.5 text-sm text-bodytext">

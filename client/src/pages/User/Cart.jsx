@@ -40,7 +40,7 @@ const Cart = () => {
       key: rzp.keyId, amount: rzp.amount, currency: rzp.currency, name: "SmartTemp",
       description: `Order ${order.orderId}`, order_id: rzp.orderId,
       prefill: { name: billing.userName, email: billing.userEmail, contact: billing.userPhone },
-      theme: { color: "#FCA311" },
+      theme: { color: "#2344D0" },
       handler: async (rp) => {
         try {
           setPlacing(true); setError(null);
@@ -121,7 +121,7 @@ const Cart = () => {
           <div className="flex-[2_1_520px] min-w-0">
             {items.map((item) => (
               <div key={item.templateId} className="flex flex-wrap gap-5 py-7 border-b border-line">
-                <div onClick={() => navigate(`/templates/${item.templateId}`)} className="w-[132px] aspect-[4/3] border border-line overflow-hidden cursor-pointer shrink-0 bg-[repeating-linear-gradient(135deg,#14213D0D_0_7px,#14213D14_7px_14px)]">
+                <div onClick={() => navigate(`/templates/${item.templateId}`)} className="w-[132px] aspect-[4/3] rounded-xl border border-line overflow-hidden cursor-pointer shrink-0 bg-[repeating-linear-gradient(135deg,#EEF1F7_0_7px,#E6EAF2_7px_14px)]">
                   {item.image && <img src={item.image} alt={item.title} className="w-full h-full object-cover" />}
                 </div>
                 <div className="flex-1 basis-[240px] min-w-0 flex flex-col gap-3.5">
@@ -141,7 +141,7 @@ const Cart = () => {
           </div>
 
           {/* Summary */}
-          <aside className="flex-1 basis-[340px] min-w-0 lg:sticky lg:top-24 mt-7 bg-paper border border-ink p-7 flex flex-col gap-[18px]">
+          <aside className="flex-1 basis-[340px] min-w-0 lg:sticky lg:top-24 mt-7 bg-paper border border-ink rounded-2xl p-7 flex flex-col gap-[18px]">
             {step === "cart" ? (
               <>
                 <h2 className="font-display text-[25px] m-0">Order summary</h2>

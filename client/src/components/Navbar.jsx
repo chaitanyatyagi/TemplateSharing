@@ -81,14 +81,14 @@ const Navbar = () => {
             <button
               onClick={() => navigate("/profile")}
               aria-label="Profile"
-              className="w-11 h-11 rounded-full bg-ink text-cream font-display italic text-[19px] flex items-center justify-center hover:bg-terracotta transition-colors"
+              className="w-11 h-11 rounded-full bg-terracotta text-cream font-display font-bold tracking-[-.025em] text-[18px] flex items-center justify-center hover:bg-ink transition-colors"
             >
               {initials}
             </button>
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="h-11 px-5 rounded-full bg-ink text-cream font-semibold text-[14px] hover:bg-terracotta transition-colors"
+              className="h-11 px-5 rounded-xl bg-ink text-cream font-semibold text-[14px] hover:bg-terracotta transition-colors"
             >
               Sign in
             </button>

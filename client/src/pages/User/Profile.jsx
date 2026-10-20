@@ -127,7 +127,7 @@ const Profile = () => {
         {/* Header */}
         <div className="flex flex-wrap gap-6 items-center justify-between border-b border-ink pb-8 animate-rise">
           <div className="flex gap-6 items-center min-w-0">
-            <div className="w-24 h-24 rounded-full bg-ink text-cream flex items-center justify-center font-display italic text-[44px] shrink-0">
+            <div className="w-24 h-24 rounded-full bg-terracotta text-cream flex items-center justify-center font-display font-bold tracking-[-.025em] text-[40px] shrink-0">
               {initialsOf(profile?.name || user?.displayName || user?.email)}
             </div>
             <div className="min-w-0">

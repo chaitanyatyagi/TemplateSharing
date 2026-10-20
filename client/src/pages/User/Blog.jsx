@@ -49,7 +49,7 @@ const Blog = () => {
               <span className="w-9 h-px bg-ink" />INSIGHTS &amp; GUIDES
             </div>
             <h1 className="font-display text-[clamp(36px,5.5vw,60px)] leading-[.95] tracking-[-.02em] m-0">
-              Accelerate your <em className="text-terracotta">growth</em>
+              Accelerate your <em className="not-italic text-terracotta">growth</em>
             </h1>
           </div>
           <p className="basis-[360px] flex-[0_1_360px] text-[17px] text-bodytext m-0">
@@ -67,7 +67,7 @@ const Blog = () => {
               const active = category === o.value;
               return (
                 <button key={o.value} onClick={() => setCategory(o.value)}
-                  className={`h-10 px-4 rounded-full border text-sm font-medium transition-all ${active ? "bg-ink text-cream border-ink" : "bg-transparent text-ink border-line hover:border-ink"}`}>
+                  className={`h-10 px-4 rounded-xl border text-sm font-medium transition-all ${active ? "bg-ink text-cream border-ink" : "bg-transparent text-ink border-line hover:border-ink"}`}>
                   {o.label}
                 </button>
               );
@@ -90,7 +90,7 @@ const Blog = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-14">
             {loading
-              ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/2] border border-line bg-creamAlt animate-pulse" />)
+              ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/2] rounded-2xl border border-line bg-creamAlt animate-pulse" />)
               : blogs.map((b) => (
                   <Card key={b._id} id={b._id} title={b.name} description={stripHtml(b.content).slice(0, 110) + "…"}
                     category={b.type} likesCount={b.likesCount || 0} isLiked={b.likedByMe || false}

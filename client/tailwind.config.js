@@ -31,20 +31,21 @@ export default {
         border: "#B1B4BC",        // default border
         borderLight: "#E5E7EB",   // subtle border (inputs, dividers)
 
-        // ---- Editorial direction (user-facing) ----
+        // ---- Direction A v2 — Cobalt ----
         cream: "#FFFFFF",          // page canvas
-        paper: "#FFFFFF",          // raised card surface
-        creamAlt: "#14213D0D",       // hatch / subtle band
-        hatch: "#14213D14",          // hatch stripe 2
-        ink: "#14213D",            // near-black — primary text & buttons
-        inkSoft: "#14213D",        // softer ink for long-form body
-        bodytext: "#14213D",       // standard body copy
-        muted2: "#14213D99",         // muted labels / meta
-        faint: "#14213D66",          // faint placeholders / captions
-        line: "#14213D1F",           // soft divider on cream
-        terracotta: "#FCA311",     // accent
-        terracottaLight: "#FCA311",// accent on dark
-        successGreen: "#2F7D4F",
+        paper: "#F5F7FC",          // raised card surface (light cobalt tint)
+        creamAlt: "#EEF1F7",       // hatch / subtle band
+        hatch: "#E6EAF2",          // hatch stripe 2
+        ink: "#0E1A3A",            // near-black navy — primary text & buttons
+        inkSoft: "#26315A",        // softer navy for long-form body / dark rules
+        bodytext: "#36405E",       // standard body copy
+        muted2: "#4C5675",         // muted labels / meta
+        faint: "#6F7794",          // faint placeholders / captions
+        line: "#E3E6EE",           // soft divider
+        terracotta: "#2344D0",     // accent (cobalt)
+        terracottaLight: "#F5D76E",// gold accent (on dark / pops)
+        gold: "#F5D76E",           // marquee band, price pills
+        successGreen: "#1F7A4C",
         likeRed: "#B3261E",
       },
       fontSize: {
@@ -55,11 +56,11 @@ export default {
       },
       fontFamily: {
         inter: ["Inter", "sans-serif"],
-        // Editorial type system
-        display: ["'Instrument Serif'", "ui-serif", "Georgia", "serif"],
-        mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
-        // Hanken Grotesk is the default UI/body font site-wide.
-        sans: ["'Hanken Grotesk'", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Cobalt type system — Bricolage Grotesque display + Instrument Sans body.
+        display: ["'Bricolage Grotesque'", "ui-sans-serif", "system-ui", "sans-serif"],
+        // 'mono' kept as a token name (used for eyebrows/labels) but is now Instrument Sans.
+        mono: ["'Instrument Sans'", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["'Instrument Sans'", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       fontWeight: {
         regular: "400",

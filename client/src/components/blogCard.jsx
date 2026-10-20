@@ -75,7 +75,7 @@ const Card = ({
     <article className="flex flex-col gap-3 group">
       <div
         onClick={() => navigate(`/blogs/${id}`)}
-        className="relative aspect-[3/2] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(45deg,#14213D0D_0_9px,#14213D14_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
+        className="relative aspect-[3/2] rounded-2xl border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(45deg,#EEF1F7_0_9px,#E6EAF2_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
       >
         {useOptimizedLoading ? (
           <img
@@ -107,7 +107,7 @@ const Card = ({
           {likesCount}
         </button>
         <button onClick={handleSave} aria-label="Save blog" className="text-bodytext hover:text-ink transition-colors active:scale-90">
-          <Bookmark size={17} fill={saved ? "#14213D" : "none"} color="currentColor" />
+          <Bookmark size={17} fill={saved ? "#0E1A3A" : "none"} color="currentColor" />
         </button>
       </div>
     </article>

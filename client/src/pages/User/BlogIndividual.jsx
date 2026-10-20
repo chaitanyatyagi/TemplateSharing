@@ -109,13 +109,13 @@ const BlogIndividual = () => {
               <Heart size={17} fill={liked ? "#B3261E" : "none"} color={liked ? "#B3261E" : "currentColor"} />{likesCount}
             </button>
             <button onClick={handleSave} aria-label="Save" className="w-10 h-10 border border-line rounded-full flex items-center justify-center hover:border-ink active:scale-90 transition-all">
-              <Bookmark size={17} fill={saved ? "#14213D" : "none"} color="#14213D" />
+              <Bookmark size={17} fill={saved ? "#0E1A3A" : "none"} color="#0E1A3A" />
             </button>
           </div>
         </div>
 
         {hero && (
-          <div className="max-w-[1120px] mx-auto my-12 aspect-[16/8] border border-ink overflow-hidden [animation:rise_.8s_.1s_both]">
+          <div className="max-w-[1120px] mx-auto my-12 aspect-[16/8] rounded-2xl border border-ink overflow-hidden [animation:rise_.8s_.1s_both]">
             <img src={hero} alt={blog.name} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.opacity = 0; }} />
           </div>
         )}

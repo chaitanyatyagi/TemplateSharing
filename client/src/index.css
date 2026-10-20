@@ -5,17 +5,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ---- Editorial base ---- */
+/* ---- Cobalt base ---- */
 html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body {
   margin: 0;
-  background: #FFFFFF;                 /* cream canvas */
-  color: #14213D;                      /* ink */
-  font-family: 'Hanken Grotesk', Inter, system-ui, sans-serif;
+  background: #FFFFFF;
+  color: #0E1A3A;
+  font-family: 'Instrument Sans', Inter, system-ui, sans-serif;
 }
-::selection { background: #FCA311; color: #14213D; }
+::selection { background: #2344D0; color: #FFFFFF; }
 
-/* ---- Editorial animations ---- */
+/* ---- Animations ---- */
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -24,28 +24,28 @@ body {
 .animate-fadeIn { animation: fadeIn .35s both; }
 .animate-marquee { animation: marquee 38s linear infinite; }
 
-/* ---- Rich blog content (rendered HTML), editorial styling ---- */
-.blog-content { color: #14213D; line-height: 1.75; font-size: 19px; font-family: 'Hanken Grotesk', sans-serif; }
-.blog-content h1 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 2.4rem; line-height: 1.1; color: #14213D; margin: 2rem 0 0.75rem; }
-.blog-content h2 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 2rem; line-height: 1.1; color: #14213D; margin: 2.2rem 0 0.75rem; }
-.blog-content h3 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 1.5rem; color: #14213D; margin: 1.5rem 0 0.5rem; }
+/* ---- Rich blog content (rendered HTML), Cobalt styling ---- */
+.blog-content { color: #26315A; line-height: 1.75; font-size: 19px; font-family: 'Instrument Sans', sans-serif; }
+.blog-content h1 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; letter-spacing: -.025em; font-size: 2.4rem; line-height: 1.1; color: #0E1A3A; margin: 2rem 0 0.75rem; }
+.blog-content h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; letter-spacing: -.025em; font-size: 2rem; line-height: 1.1; color: #0E1A3A; margin: 2.2rem 0 0.75rem; }
+.blog-content h3 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; letter-spacing: -.025em; font-size: 1.5rem; color: #0E1A3A; margin: 1.5rem 0 0.5rem; }
 .blog-content p { margin: 0 0 1.25rem; }
-.blog-content a { color: #FCA311; text-decoration: underline; }
-.blog-content a:hover { color: #14213D; }
+.blog-content a { color: #2344D0; text-decoration: underline; }
+.blog-content a:hover { color: #0E1A3A; }
 .blog-content ul { list-style: disc; padding-left: 1.4rem; margin: 0 0 1.25rem; }
 .blog-content ol { list-style: decimal; padding-left: 1.4rem; margin: 0 0 1.25rem; }
 .blog-content li { margin: 0.35rem 0; }
-.blog-content blockquote { border-left: 2px solid #FCA311; padding-left: 1.5rem; margin: 2rem 0; font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.9rem; line-height: 1.25; color: #14213D; }
-.blog-content pre, .blog-content code { background: #14213D0D; border-radius: 2px; font-family: 'JetBrains Mono', monospace; }
+.blog-content blockquote { border-left: 2px solid #2344D0; padding-left: 1.5rem; margin: 2rem 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; letter-spacing: -.025em; font-size: 1.75rem; line-height: 1.25; color: #0E1A3A; }
+.blog-content pre, .blog-content code { background: #EEF1F7; border-radius: 8px; font-family: ui-monospace, monospace; }
 .blog-content pre { padding: 1rem 1.25rem; overflow-x: auto; }
-.blog-content img { max-width: 100%; height: auto; margin: 1.25rem 0; border: 1px solid #14213D; }
+.blog-content img { max-width: 100%; height: auto; margin: 1.25rem 0; border-radius: 16px; border: 1px solid #E3E6EE; }
 
 /* Rich-text editor authoring height */
 .rich-editor .ql-container { min-height: 240px; font-family: inherit; font-size: 1rem; }
 .rich-editor .ql-editor { min-height: 240px; }
 
-/* Editorial drop-cap on the first paragraph of an article */
+/* Cobalt drop-cap on the first paragraph of an article */
 .blog-content.article > p:first-of-type::first-letter {
-  float: left; font-family: 'Instrument Serif', serif; font-size: 84px; line-height: .78;
-  color: #FCA311; padding: 8px 12px 0 0;
+  float: left; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; letter-spacing: -.025em;
+  font-size: 72px; line-height: .8; color: #2344D0; padding: 8px 10px 0 0;
 }

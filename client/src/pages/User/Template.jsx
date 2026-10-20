@@ -45,7 +45,7 @@ const Template = () => {
               <span className="w-9 h-px bg-ink" />TEMPLATES
             </div>
             <h1 className="font-display text-[clamp(36px,5.5vw,60px)] leading-[.95] tracking-[-.02em] m-0">
-              Find the perfect <em className="text-terracotta">template</em>
+              Find the perfect <em className="not-italic text-terracotta">template</em>
             </h1>
           </div>
           <p className="basis-[360px] flex-[0_1_360px] text-[17px] text-bodytext m-0">
@@ -64,7 +64,7 @@ const Template = () => {
               const active = category === o.value;
               return (
                 <button key={o.value} onClick={() => setCategory(o.value)}
-                  className={`h-10 px-[18px] rounded-full border text-sm font-medium transition-all ${active ? "bg-ink text-cream border-ink" : "bg-transparent text-ink border-line hover:border-ink"}`}>
+                  className={`h-10 px-[18px] rounded-xl border text-sm font-medium transition-all ${active ? "bg-ink text-cream border-ink" : "bg-transparent text-ink border-line hover:border-ink"}`}>
                   {o.label}
                 </button>
               );
@@ -87,7 +87,7 @@ const Template = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-14">
             {loading
-              ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[4/3] border border-line bg-creamAlt animate-pulse" />)
+              ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[4/3] rounded-2xl border border-line bg-creamAlt animate-pulse" />)
               : templates.map((t) => (
                   <TemplateCard key={t._id} id={t._id} image={getTemplateImageUrl(t.card_image)} title={t.name}
                     description={t.card_content} category={t.template_category} price={t.template_type === "free" ? 0 : t.price} />

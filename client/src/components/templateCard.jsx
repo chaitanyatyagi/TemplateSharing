@@ -47,7 +47,7 @@ const TemplateCard = ({
       {/* Image */}
       <div
         onClick={() => navigate(`/templates/${id}`)}
-        className="relative aspect-[4/3] border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(135deg,#14213D0D_0_9px,#14213D14_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
+        className="relative aspect-[4/3] rounded-2xl border border-line overflow-hidden cursor-pointer bg-[repeating-linear-gradient(135deg,#EEF1F7_0_9px,#E6EAF2_9px_18px)] group-hover:-translate-y-1.5 group-hover:border-ink transition-all duration-500"
       >
         {image ? (
           <img
@@ -61,7 +61,7 @@ const TemplateCard = ({
             template cover
           </span>
         )}
-        <span className="absolute left-3 top-3 bg-cream border border-ink px-2.5 py-1 font-mono text-[12px] font-medium">
+        <span className="absolute left-3 top-3 bg-gold text-ink rounded-full px-3 py-1 font-sans text-[12px] font-semibold">
           {isFree ? "Free" : `₹${price}`}
         </span>
         <button
@@ -69,7 +69,7 @@ const TemplateCard = ({
           aria-label="Toggle wishlist"
           className="absolute right-2.5 top-2.5 w-10 h-10 rounded-full border border-line bg-cream flex items-center justify-center hover:scale-110 active:scale-90 transition-transform"
         >
-          <Heart size={17} fill={liked ? "#FCA311" : "none"} color={liked ? "#FCA311" : "#14213D"} />
+          <Heart size={17} fill={liked ? "#2344D0" : "none"} color={liked ? "#2344D0" : "#0E1A3A"} />
         </button>
       </div>
 
