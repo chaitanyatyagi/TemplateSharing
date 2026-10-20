@@ -42,7 +42,7 @@ const BlogRow = ({ blog, num }) => {
       <span className="font-mono text-[13px] text-faint">{num}</span>
       <div onClick={() => navigate(`/blogs/${blog._id}`)} className="cursor-pointer flex flex-col gap-1.5 min-w-0 hover:translate-x-2.5 transition-transform duration-300">
         <span className="font-mono text-[11px] font-medium tracking-[.1em] uppercase text-terracotta">{blog.type}</span>
-        <h3 className="font-display text-[clamp(24px,2.6vw,36px)] leading-[1.08] text-ink m-0">{blog.name}</h3>
+        <h3 className="font-display text-[clamp(21px,2.2vw,28px)] leading-[1.08] text-ink m-0">{blog.name}</h3>
         <p className="text-sm text-muted2 max-w-[640px] line-clamp-1 m-0">{stripHtml(blog.content).slice(0, 120)}</p>
       </div>
       <div className="flex gap-1.5 items-center">
@@ -61,7 +61,7 @@ const SectionHead = ({ num, label, title, subtitle, cta, onCta }) => (
   <div className="flex flex-wrap gap-x-12 gap-y-5 items-end justify-between border-b border-ink pb-7 mb-10">
     <div className="flex-1 min-w-[280px] basis-[420px]">
       <div className="font-mono text-[12px] font-medium tracking-[.08em] text-terracotta mb-3.5">{num} / {label}</div>
-      <h2 className="font-display text-[clamp(40px,5vw,68px)] leading-none tracking-[-.015em] text-ink m-0">{title}</h2>
+      <h2 className="font-display text-[clamp(28px,3.6vw,42px)] leading-none tracking-[-.015em] text-ink m-0">{title}</h2>
     </div>
     <div className="basis-[380px] flex-[0_1_380px] flex flex-col gap-4 items-start">
       <p className="text-bodytext m-0">{subtitle}</p>
@@ -98,7 +98,7 @@ const Home = () => {
           <div className="flex items-center gap-3 font-mono text-[12px] font-medium tracking-[.08em] uppercase text-muted2">
             <span className="w-9 h-px bg-ink" />100+ premium templates &amp; guides
           </div>
-          <h1 className="font-display font-normal text-[clamp(52px,7.4vw,112px)] leading-[.94] tracking-[-.02em] text-balance m-0">
+          <h1 className="font-display font-normal text-[clamp(38px,5.5vw,66px)] leading-[.94] tracking-[-.02em] text-balance m-0">
             Productivity templates for <em className="text-terracotta">ambitious</em> teams &amp; professionals.
           </h1>
           <p className="max-w-[520px] text-[clamp(17px,1.4vw,19px)] leading-[1.6] text-bodytext m-0">
@@ -131,7 +131,7 @@ const Home = () => {
       <div className="border-y border-ink bg-creamAlt overflow-hidden">
         <div className="flex w-max animate-marquee">
           {[...TICKER, ...TICKER].map((tk, i) => (
-            <span key={i} className="flex items-center gap-7 px-3.5 py-4 font-display italic text-[30px] leading-none whitespace-nowrap">
+            <span key={i} className="flex items-center gap-7 px-3.5 py-4 font-display italic text-[22px] leading-none whitespace-nowrap">
               {tk}<span className="w-2 h-2 rounded-full bg-terracotta" />
             </span>
           ))}
@@ -143,7 +143,7 @@ const Home = () => {
         <SectionHead num="02" label="TEMPLATES" title="Find the perfect template"
           subtitle="Our most popular picks to help you work smarter and deliver exceptional results."
           cta="View all templates" onCta={() => navigate("/templates")} />
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-x-7 gap-y-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-12">
           {loadingT
             ? Array.from({ length: LIMIT }).map((_, i) => <div key={i} className="aspect-[4/3] border border-line bg-creamAlt animate-pulse" />)
             : templates.map((t) => (
@@ -158,7 +158,7 @@ const Home = () => {
         <div className="bg-ink text-cream p-8 sm:p-12 md:p-20 flex flex-wrap gap-8 md:gap-16 items-end justify-between">
           <div className="flex-1 basis-[420px]">
             <div className="font-mono text-[12px] font-medium tracking-[.08em] text-terracottaLight mb-4">THE NEWSLETTER</div>
-            <h3 className="font-display text-[clamp(36px,4.4vw,60px)] leading-none m-0">Get productivity tips <em className="text-cream">in your inbox</em></h3>
+            <h3 className="font-display text-[clamp(26px,3.2vw,40px)] leading-none m-0">Get productivity tips <em className="text-cream">in your inbox</em></h3>
             <p className="text-[#FFFFFF99] mt-4 m-0">Fresh templates and guides, no spam. Unsubscribe anytime.</p>
           </div>
           <form onSubmit={(e) => e.preventDefault()} className="flex-1 basis-[360px] flex flex-wrap gap-3 items-stretch">

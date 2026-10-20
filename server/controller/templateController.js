@@ -400,8 +400,11 @@ exports.downloadTemplate = async (req, res) => {
     let owns = isAdmin || isFree;
 
     if (!owns) {
+      // Only a COMPLETED (successfully paid) order grants download access —
+      // pending or failed payments must not.
       const order = await Order.findOne({
         userId: req.userId,
+        orderStatus: "completed",
         "items.templateId": templateId,
       }).select("_id");
       owns = Boolean(order);
@@ -410,7 +413,7 @@ exports.downloadTemplate = async (req, res) => {
     if (!owns) {
       return res.status(403).json({
         status: "Error",
-        message: "You need to purchase this template before downloading it.",
+        message: "You need to complete payment for this template before downloading it.",
       });
     }
 

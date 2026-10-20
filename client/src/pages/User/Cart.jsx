@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Plus, Minus, ShoppingCart, CheckCircle2, ArrowLeft, Download, ShieldCheck, AlertCircle, ArrowRight } from "lucide-react";
+import { Trash2, ShoppingCart, CheckCircle2, ArrowLeft, Download, ShieldCheck, AlertCircle, ArrowRight } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useCart } from "../../context/CartContext";
@@ -13,7 +13,7 @@ const emptyBilling = { userName: "", userEmail: "", userPhone: "", userCity: "",
 const Cart = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { items, updateQuantity, removeItem, clear, subtotal } = useCart();
+  const { items, removeItem, clear, subtotal } = useCart();
 
   const [step, setStep] = useState("cart"); // cart | checkout | success
   const [billing, setBilling] = useState(emptyBilling);
@@ -78,7 +78,7 @@ const Cart = () => {
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-5 gap-[18px] animate-rise">
           <div className="w-[84px] h-[84px] rounded-full border border-successGreen flex items-center justify-center"><CheckCircle2 size={40} className="text-successGreen" /></div>
-          <h2 className="font-display text-[clamp(44px,5vw,64px)] leading-none m-0">Order placed successfully!</h2>
+          <h2 className="font-display text-[clamp(32px,4vw,46px)] leading-none m-0">Order placed successfully!</h2>
           <p className="max-w-[440px] text-bodytext m-0">Your templates are on the way to your inbox. You can download them anytime from your profile.</p>
           <div className="flex flex-wrap gap-3 justify-center mt-2">
             <button onClick={() => navigate("/profile")} className="h-[54px] px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">View my downloads</button>
@@ -96,7 +96,7 @@ const Cart = () => {
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-5 gap-4 animate-rise">
           <ShoppingCart size={40} className="text-terracotta" />
-          <h2 className="font-display text-[56px] leading-none m-0">Your cart is empty</h2>
+          <h2 className="font-display text-[36px] leading-none m-0">Your cart is empty</h2>
           <p className="text-bodytext m-0">Add some templates to get started.</p>
           <button onClick={() => navigate("/templates")} className="mt-2 h-[54px] px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">Browse templates</button>
         </div>
@@ -112,7 +112,7 @@ const Cart = () => {
         <button onClick={() => navigate("/templates")} className="flex items-center gap-2 py-2 mb-7 text-sm font-medium text-muted2 hover:text-ink hover:gap-3.5 transition-all"><ArrowLeft size={16} /> Continue shopping</button>
 
         <div className="flex items-baseline gap-[18px] flex-wrap border-b border-ink pb-6 animate-rise">
-          <h1 className="font-display text-[clamp(52px,6vw,88px)] leading-[.95] tracking-[-.02em] m-0">Shopping cart</h1>
+          <h1 className="font-display text-[clamp(34px,5vw,52px)] leading-[.95] tracking-[-.02em] m-0">Shopping cart</h1>
           <span className="font-mono text-[13px] text-muted2">{items.length} {items.length === 1 ? "item" : "items"}</span>
         </div>
 
@@ -128,20 +128,12 @@ const Cart = () => {
                   <div className="flex justify-between gap-3">
                     <div>
                       <div className="font-mono text-[11px] font-medium tracking-[.1em] uppercase text-terracotta">{item.category}</div>
-                      <h3 onClick={() => navigate(`/templates/${item.templateId}`)} className="font-display text-[28px] leading-[1.1] mt-1 cursor-pointer hover:text-terracotta transition-colors m-0">{item.title}</h3>
+                      <h3 onClick={() => navigate(`/templates/${item.templateId}`)} className="font-display text-[22px] leading-[1.1] mt-1 cursor-pointer hover:text-terracotta transition-colors m-0">{item.title}</h3>
                     </div>
                     <button onClick={() => removeItem(item.templateId)} aria-label="Remove" className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#F4DEDA] transition-colors shrink-0"><Trash2 size={18} className="text-muted2" /></button>
                   </div>
-                  <div className="flex justify-between items-end flex-wrap gap-3">
-                    <div className="flex items-center border border-ink rounded-full h-11">
-                      <button onClick={() => updateQuantity(item.templateId, item.quantity - 1)} aria-label="Decrease" className="w-11 h-[42px] flex items-center justify-center active:scale-90"><Minus size={15} /></button>
-                      <span className="min-w-[28px] text-center font-mono text-[15px] font-medium">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.templateId, item.quantity + 1)} aria-label="Increase" className="w-11 h-[42px] flex items-center justify-center active:scale-90"><Plus size={15} /></button>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-mono text-[12px] text-muted2">₹{item.price} each</div>
-                      <div className="font-display text-[32px] leading-none">₹{item.price * item.quantity}</div>
-                    </div>
+                  <div className="flex justify-end items-end">
+                    <div className="font-display text-[30px] leading-none">{item.price > 0 ? `₹${item.price}` : "Free"}</div>
                   </div>
                 </div>
               </div>
@@ -152,7 +144,7 @@ const Cart = () => {
           <aside className="flex-1 basis-[340px] min-w-0 lg:sticky lg:top-24 mt-7 bg-paper border border-ink p-7 flex flex-col gap-[18px]">
             {step === "cart" ? (
               <>
-                <h2 className="font-display text-[32px] m-0">Order summary</h2>
+                <h2 className="font-display text-[25px] m-0">Order summary</h2>
                 <div className="flex justify-between text-sm text-muted2"><span>Subtotal</span><span className="font-mono">₹{subtotal.toFixed(2)}</span></div>
                 <div className="flex justify-between items-baseline border-t border-ink pt-4"><span className="font-semibold">Total</span><span className="font-display text-[40px] leading-none">{total <= 0 ? "Free" : `₹${total.toFixed(2)}`}</span></div>
                 <button onClick={() => setStep("checkout")} className="h-14 rounded-full bg-ink text-cream font-semibold flex items-center justify-center gap-2.5 hover:bg-terracotta hover:gap-4 active:scale-[.98] transition-all">Proceed to checkout <ArrowRight size={17} /></button>
@@ -163,7 +155,7 @@ const Cart = () => {
               </>
             ) : (
               <>
-                <h2 className="font-display text-[32px] m-0">Billing details</h2>
+                <h2 className="font-display text-[25px] m-0">Billing details</h2>
                 {error && <div className="flex items-start gap-2 p-3 bg-[#F4DEDA] text-likeRed text-sm"><AlertCircle size={16} className="shrink-0 mt-0.5" />{error}</div>}
                 <form onSubmit={placeOrder} className="flex flex-col gap-5 animate-fadeIn">
                   <input type="text" name="userName" placeholder="Full name" value={billing.userName} onChange={changeBilling} className={input} required />

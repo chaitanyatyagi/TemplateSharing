@@ -70,7 +70,7 @@ const TemplateIndividual = () => {
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-5 gap-3">
           <AlertCircle size={38} className="text-likeRed" />
-          <p className="font-display text-[28px] m-0">{error || "Template not found"}</p>
+          <p className="font-display text-[22px] m-0">{error || "Template not found"}</p>
           <button onClick={() => navigate("/templates")} className="mt-2 h-12 px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">Back to templates</button>
         </div>
         <Footer />
@@ -113,7 +113,7 @@ const TemplateIndividual = () => {
           {/* Aside */}
           <aside className="flex-1 min-w-0 basis-[380px] lg:sticky lg:top-24 flex flex-col gap-6 [animation:rise_.8s_.1s_both]">
             <div className="font-mono text-[12px] font-medium tracking-[.1em] uppercase text-terracotta">{template.template_category}</div>
-            <h1 className="font-display text-[clamp(44px,5vw,72px)] leading-[.98] tracking-[-.015em] -mt-2.5 m-0">{template.name}</h1>
+            <h1 className="font-display text-[clamp(30px,4vw,48px)] leading-[.98] tracking-[-.015em] -mt-2.5 m-0">{template.name}</h1>
             <div className="flex items-baseline gap-3 border-y border-y-line border-t-ink py-[18px]">
               <span className="font-display text-[48px] leading-none">{isFree ? "Free" : `₹${template.price}`}</span>
               {!isFree && <span className="font-mono text-[12px] text-muted2">ONE-TIME</span>}
@@ -148,13 +148,13 @@ const TemplateIndividual = () => {
         <div className="mt-14 md:mt-24 grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-[72px] gap-y-10 border-t border-ink pt-10">
           <div>
             <div className="font-mono text-[12px] font-medium text-terracotta tracking-[.08em] mb-3.5">01</div>
-            <h2 className="font-display text-[36px] mb-3.5 m-0">About this template</h2>
+            <h2 className="font-display text-[27px] mb-3.5 m-0">About this template</h2>
             <p className="text-bodytext text-[17px] leading-[1.7] whitespace-pre-line m-0">{template.template_description}</p>
           </div>
           {included.length > 0 && (
             <div>
               <div className="font-mono text-[12px] font-medium text-terracotta tracking-[.08em] mb-3.5">02</div>
-              <h2 className="font-display text-[36px] mb-3.5 m-0">What's included</h2>
+              <h2 className="font-display text-[27px] mb-3.5 m-0">What's included</h2>
               <div>
                 {included.map((inc, i) => (
                   <div key={i} className="flex gap-3 py-3 border-b border-line text-bodytext">

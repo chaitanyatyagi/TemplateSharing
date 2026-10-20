@@ -14,7 +14,7 @@ const Footer = () => {
   return (
     <footer className="bg-ink text-cream mt-auto">
       <div className="max-w-[1320px] mx-auto px-5 sm:px-8 lg:px-12 pt-14 md:pt-24 pb-10">
-        <p className="font-display font-normal text-[clamp(44px,7vw,112px)] leading-[.92] tracking-[-.02em] max-w-[1000px] m-0">
+        <p className="font-display font-normal text-[clamp(32px,5vw,56px)] leading-[.92] tracking-[-.02em] max-w-[1000px] m-0">
           Made for <em className="text-terracottaLight not-italic font-display italic">productive</em> people.
         </p>
 

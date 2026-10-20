@@ -131,7 +131,7 @@ const Profile = () => {
               {initialsOf(profile?.name || user?.displayName || user?.email)}
             </div>
             <div className="min-w-0">
-              <h1 className="font-display text-[clamp(40px,5vw,64px)] leading-none m-0">{profile?.name || user?.displayName || "Your profile"}</h1>
+              <h1 className="font-display text-[clamp(28px,3.6vw,42px)] leading-none m-0">{profile?.name || user?.displayName || "Your profile"}</h1>
               <div className="flex flex-wrap gap-2.5 items-center mt-2">
                 <span className="text-[15px] text-muted2">{user?.email || user?.phoneNumber || "—"}</span>
                 <span className="font-mono text-[11px] font-medium tracking-[.08em] border border-terracotta text-terracotta px-2.5 py-0.5 rounded-full">
@@ -182,7 +182,7 @@ const Profile = () => {
           <button onClick={handleLogout} className="ml-auto h-14 flex gap-2.5 items-center font-medium text-[15px] text-muted2 hover:text-likeRed transition-colors"><LogOut size={17} /> Logout</button>
         </div>
 
-        <h2 className="font-display text-[36px] mb-6 m-0">{tabTitle}</h2>
+        <h2 className="font-display text-[27px] mb-6 m-0">{tabTitle}</h2>
 
         {downloadError && menu === "purchasedItems" && <div className="mb-4 p-3 bg-[#F4DEDA] text-likeRed text-sm">{downloadError}</div>}
 
@@ -222,7 +222,7 @@ const Profile = () => {
               <button onClick={() => navigate("/blogs")} className="mt-3.5 h-[46px] px-5 rounded-full bg-ink text-cream font-semibold text-sm">Browse Blogs</button>
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-7 gap-y-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-10">
               {savedBlogs.map((b) => (
                 <Card key={b._id} id={b._id} title={b.name} description={(b.content || "").replace(/<[^>]+>/g, " ").slice(0, 100)} category={b.type}
                   likesCount={b.likesCount || 0} isLiked={b.likedByMe || false} imageUrl={getServerAssetUrl(b.imageUrl)} useOptimizedLoading={false} />
@@ -239,7 +239,7 @@ const Profile = () => {
               <button onClick={() => navigate("/templates")} className="mt-3.5 h-[46px] px-5 rounded-full bg-ink text-cream font-semibold text-sm">Browse Templates</button>
             </div>
           ) : (
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-x-7 gap-y-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-12">
               {wishlistTemplates.map((t) => (
                 <TemplateCard key={t._id} id={t._id} image={getTemplateImageUrl(t.card_image)} title={t.name}
                   description={t.card_content} category={t.template_category} price={t.template_type === "free" ? 0 : t.price} />

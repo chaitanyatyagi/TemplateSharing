@@ -48,7 +48,7 @@ const Blog = () => {
             <div className="flex items-center gap-3 font-mono text-[12px] font-medium tracking-[.08em] text-muted2 mb-[18px]">
               <span className="w-9 h-px bg-ink" />INSIGHTS &amp; GUIDES
             </div>
-            <h1 className="font-display text-[clamp(52px,7vw,104px)] leading-[.95] tracking-[-.02em] m-0">
+            <h1 className="font-display text-[clamp(36px,5.5vw,60px)] leading-[.95] tracking-[-.02em] m-0">
               Accelerate your <em className="text-terracotta">growth</em>
             </h1>
           </div>
@@ -59,7 +59,7 @@ const Blog = () => {
 
         <div className="my-10 md:my-12 border-t border-ink border-b border-b-line py-[18px] flex flex-wrap gap-x-8 gap-y-4 items-center justify-between">
           <div className="flex items-baseline gap-3.5">
-            <h2 className="font-display text-[28px] m-0">Latest Blogs</h2>
+            <h2 className="font-display text-[22px] m-0">Latest Blogs</h2>
             {!loading && !error && <span className="font-mono text-[12px] text-muted2">{String(blogs.length).padStart(2, "0")} articles</span>}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -84,11 +84,11 @@ const Blog = () => {
         ) : !loading && blogs.length === 0 ? (
           <div className="py-20 flex flex-col items-center text-center gap-2">
             <Newspaper size={38} className="text-faint" />
-            <p className="font-display text-[28px] m-0">No articles in this category yet</p>
+            <p className="font-display text-[22px] m-0">No articles in this category yet</p>
             <p className="text-muted2 text-sm m-0">Try a different category or check back soon.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-7 gap-y-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-14">
             {loading
               ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/2] border border-line bg-creamAlt animate-pulse" />)
               : blogs.map((b) => (

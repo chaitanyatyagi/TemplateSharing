@@ -42,11 +42,8 @@ const Login = () => {
       <Navbar />
       <div className="flex-1 flex items-center justify-center px-5 py-12 md:py-20">
         <div className="w-full max-w-[520px] text-center flex flex-col items-center gap-5 animate-rise">
-          <img src={MainLogo} alt="SmartTemp" className="h-8 [filter:brightness(0)] opacity-90" />
-          <h1 className="mt-3 font-display text-[clamp(56px,8vw,96px)] leading-[.95] tracking-[-.02em] m-0">
-            Welcome <em className="text-terracotta">back</em>
-          </h1>
-          <p className="max-w-[380px] text-bodytext m-0">Sign in to access your templates, downloads and saved content.</p>
+          <img src={MainLogo} alt="SmartTemp" className="h-9 [filter:brightness(0)] opacity-90" />
+          <p className="max-w-[380px] text-bodytext text-[17px] mt-3 m-0">Sign in to access your templates, downloads and saved content.</p>
 
           {error && <div className="w-full p-3 bg-[#F4DEDA] text-likeRed text-sm">{error}</div>}
 

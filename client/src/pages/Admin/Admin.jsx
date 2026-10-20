@@ -97,7 +97,7 @@ const Admin = () => {
         <div className="fixed inset-0 z-[60] flex md:hidden">
           <div className="w-[80vw] max-w-[320px] bg-ink py-5 px-4 flex flex-col gap-1.5 [animation:rise_.4s_both]">
             <div className="flex justify-between items-center mb-5 pl-3.5">
-              <span className="text-cream font-display text-[28px]">Menu</span>
+              <span className="text-cream font-display text-[22px]">Menu</span>
               <button onClick={() => setMenuOpen(false)} aria-label="Close" className="w-11 h-11 flex items-center justify-center"><X size={22} className="text-cream" /></button>
             </div>
             {MENU.map((item) => <SidebarItem key={item.name} item={item} onClick={() => { setActiveMenu(item.name); setMenuOpen(false); }} />)}

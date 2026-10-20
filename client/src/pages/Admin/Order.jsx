@@ -44,9 +44,13 @@ const Order = () => {
             STATUS: order.orderStatus,
           }));
 
-          const totalAmount = orders.reduce((sum, o) => sum + (o.orderAmount || 0), 0);
+          // Revenue counts only completed (paid) orders — matches the Dashboard.
+          const completed = orders.filter((o) => o.orderStatus === "completed");
+          const totalAmount = completed.reduce((sum, o) => sum + (o.orderAmount || 0), 0);
           const monthlyOrders = orders.filter((o) => isThisMonth(o.createdAt || o.orderDate));
-          const monthlyAmount = monthlyOrders.reduce((sum, o) => sum + (o.orderAmount || 0), 0);
+          const monthlyAmount = completed
+            .filter((o) => isThisMonth(o.createdAt || o.orderDate))
+            .reduce((sum, o) => sum + (o.orderAmount || 0), 0);
 
           setSummary({
             totalOrders: orders.length,

@@ -95,7 +95,7 @@ const Card = ({
       <div className="font-mono text-[11px] font-medium tracking-[.1em] uppercase text-terracotta mt-1">{category}</div>
       <h3
         onClick={() => navigate(`/blogs/${id}`)}
-        className="font-display text-[28px] leading-[1.08] -mt-0.5 cursor-pointer text-ink hover:text-terracotta transition-colors"
+        className="font-display text-[22px] leading-[1.08] -mt-0.5 cursor-pointer text-ink hover:text-terracotta transition-colors"
       >
         {title}
       </h3>

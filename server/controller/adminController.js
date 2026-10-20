@@ -66,14 +66,15 @@ exports.getDashboardStats = async (req, res) => {
       Template.countDocuments({ createdAt: { $gte: startOfMonth } }),
       Blog.countDocuments(),
       Blog.countDocuments({ createdAt: { $gte: startOfMonth } }),
+      // Revenue counts only COMPLETED (paid) orders — pending/failed excluded.
       Order.aggregate([
-        { $match: { orderStatus: { $ne: "failed" } } },
+        { $match: { orderStatus: "completed" } },
         { $group: { _id: null, total: { $sum: "$orderAmount" } } },
       ]),
       Order.aggregate([
         {
           $match: {
-            orderStatus: { $ne: "failed" },
+            orderStatus: "completed",
             createdAt: { $gte: startOfMonth },
           },
         },

@@ -41,7 +41,7 @@ const LoginPromoPopup = () => {
             <Gift size={26} className="text-terracotta" />
           </div>
           <div className="font-mono text-[12px] font-medium tracking-[.1em] uppercase text-terracotta">Free for members</div>
-          <h3 className="font-display text-[clamp(34px,5vw,48px)] leading-none text-ink m-0">Get a free template</h3>
+          <h3 className="font-display text-[clamp(26px,4vw,36px)] leading-none text-ink m-0">Get a free template</h3>
           <p className="text-bodytext text-[15px] max-w-[340px] m-0">
             Sign up in seconds and claim a free premium template — plus new drops, guides and productivity tips.
           </p>

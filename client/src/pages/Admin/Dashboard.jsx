@@ -27,7 +27,7 @@ const Dashboard = () => {
     <div className="p-6 sm:p-10 lg:p-14 w-full overflow-y-auto">
       <div className="animate-rise">
         <div className="font-mono text-[12px] font-medium tracking-[.08em] text-muted2">{today}</div>
-        <h1 className="font-display text-[clamp(48px,6vw,80px)] leading-[.95] tracking-[-.02em] my-2.5 m-0">Dashboard</h1>
+        <h1 className="font-display text-[clamp(32px,4.5vw,50px)] leading-[.95] tracking-[-.02em] my-2.5 m-0">Dashboard</h1>
         <p className="text-bodytext m-0">Welcome back, <b className="text-ink">Amit</b> — here's what's happening with your marketplace.</p>
       </div>
 
@@ -45,7 +45,7 @@ const Dashboard = () => {
                     <span className="font-mono text-[11px] font-medium tracking-[.1em] uppercase text-muted2">{c.title}</span>
                     <Icon size={18} className="text-terracotta" />
                   </div>
-                  <div className="font-display text-[60px] leading-[.9] tracking-[-.02em]">{c.value}</div>
+                  <div className="font-display text-[42px] leading-[.9] tracking-[-.02em]">{c.value}</div>
                   <div className="flex justify-between text-[13px] text-muted2 border-t border-line pt-3">
                     <span>{c.subtitle}</span><span className="font-mono text-ink">{c.subValue}</span>
                   </div>

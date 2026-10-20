@@ -84,7 +84,7 @@ const BlogIndividual = () => {
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-5 gap-3">
           <AlertCircle size={38} className="text-likeRed" />
-          <p className="font-display text-[28px] m-0">{error || "Blog not found"}</p>
+          <p className="font-display text-[22px] m-0">{error || "Blog not found"}</p>
           <button onClick={() => navigate("/blogs")} className="mt-2 h-12 px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">Back to blogs</button>
         </div>
         <Footer />
@@ -103,7 +103,7 @@ const BlogIndividual = () => {
             <ArrowLeft size={16} /> Back to blogs
           </button>
           <div className="font-mono text-[12px] font-medium tracking-[.1em] uppercase text-terracotta">{blog.type}</div>
-          <h1 className="mt-4 font-display text-[clamp(44px,6vw,80px)] leading-[.98] tracking-[-.02em] text-balance m-0">{blog.name}</h1>
+          <h1 className="mt-4 font-display text-[clamp(32px,4.5vw,52px)] leading-[.98] tracking-[-.02em] text-balance m-0">{blog.name}</h1>
           <div className="flex gap-2.5 items-center mt-7 py-4 border-t border-ink border-b border-b-line">
             <button onClick={handleLike} disabled={likeBusy} className="h-10 px-3.5 border border-line rounded-full flex gap-2 items-center font-mono text-[13px] text-bodytext hover:border-likeRed active:scale-90 transition-all disabled:opacity-60">
               <Heart size={17} fill={liked ? "#B3261E" : "none"} color={liked ? "#B3261E" : "currentColor"} />{likesCount}

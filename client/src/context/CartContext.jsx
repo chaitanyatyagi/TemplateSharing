@@ -18,18 +18,13 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  // template: { templateId, title, image, category, price }
-  const addItem = (template, quantity = 1) => {
+  // Templates are digital goods — exactly one of each in the cart (no quantity).
+  // Adding an already-present template is a no-op. Re-purchasing a template you
+  // already own is always allowed (nothing here blocks it).
+  const addItem = (template) => {
     setItems((prev) => {
-      const existing = prev.find((item) => item.templateId === template.templateId);
-      if (existing) {
-        return prev.map((item) =>
-          item.templateId === template.templateId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...prev, { ...template, quantity }];
+      if (prev.some((item) => item.templateId === template.templateId)) return prev;
+      return [...prev, { ...template, quantity: 1 }];
     });
   };
 
@@ -37,23 +32,14 @@ export const CartProvider = ({ children }) => {
     setItems((prev) => prev.filter((item) => item.templateId !== templateId));
   };
 
-  const updateQuantity = (templateId, quantity) => {
-    if (quantity < 1) return;
-    setItems((prev) =>
-      prev.map((item) =>
-        item.templateId === templateId ? { ...item, quantity } : item
-      )
-    );
-  };
-
   const clear = () => setItems([]);
 
-  const count = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const count = items.length;
+  const subtotal = items.reduce((sum, item) => sum + (item.price || 0), 0);
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clear, count, subtotal }}
+      value={{ items, addItem, removeItem, clear, count, subtotal }}
     >
       {children}
     </CartContext.Provider>

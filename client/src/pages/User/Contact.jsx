@@ -35,7 +35,7 @@ const Contact = () => {
           <div className="flex items-center gap-3 font-mono text-[12px] font-medium tracking-[.08em] text-muted2">
             <span className="w-9 h-px bg-ink" />WE'D LOVE TO HEAR FROM YOU
           </div>
-          <h1 className="font-display text-[clamp(60px,8vw,120px)] leading-[.9] tracking-[-.02em] m-0">Contact <em className="text-terracotta">us</em></h1>
+          <h1 className="font-display text-[clamp(40px,6vw,68px)] leading-[.9] tracking-[-.02em] m-0">Contact <em className="text-terracotta">us</em></h1>
           <p className="max-w-[440px] text-[18px] text-bodytext m-0">Questions, feedback or a custom request? Send us a message and we'll get back to you.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
             <div className="border border-line p-5 flex items-start gap-3 bg-paper">
@@ -58,7 +58,7 @@ const Contact = () => {
 
         {/* Form */}
         <div className="flex-1 min-w-0 basis-[420px] bg-paper border border-ink p-6 sm:p-8 flex flex-col gap-5 [animation:rise_.8s_.1s_both]">
-          <h2 className="font-display text-[32px] m-0">Send us a message</h2>
+          <h2 className="font-display text-[25px] m-0">Send us a message</h2>
           {success && <div className="flex items-start gap-2 p-3 border border-successGreen text-successGreen text-sm"><CheckCircle2 size={18} className="shrink-0 mt-0.5" />{success}</div>}
           {error && <div className="flex items-start gap-2 p-3 bg-[#F4DEDA] text-likeRed text-sm"><AlertCircle size={18} className="shrink-0 mt-0.5" />{error}</div>}
           <form onSubmit={submit} className="flex flex-col gap-6">
