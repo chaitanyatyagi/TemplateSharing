@@ -112,6 +112,7 @@ const Navbar = () => {
     );
 
   return (
+    <>
     <header className="sticky top-0 z-40 bg-cream supports-[backdrop-filter]:bg-cream/90 backdrop-blur-md border-b-2 border-ink">
       <div className="max-w-[1320px] mx-auto px-5 sm:px-8 lg:px-12">
         {/* Desktop — editorial masthead: links | centred wordmark | links + actions */}
@@ -163,11 +164,14 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+    </header>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — rendered outside <header> so its fixed positioning
+          is viewport-relative (the header's backdrop-filter would otherwise
+          make it the containing block and trap the drawer at navbar height). */}
       {menuOpen && (
-        <div className="fixed inset-0 z-[60] flex lg:hidden">
-          <div className="w-[86vw] max-w-[380px] bg-cream border-r-2 border-ink px-6 py-5 flex flex-col gap-1.5 [animation:rise_.4s_both]">
+        <div className="fixed inset-0 z-[70] flex lg:hidden">
+          <div className="w-[86vw] max-w-[380px] bg-cream border-r-2 border-ink px-6 py-5 flex flex-col gap-1.5 overflow-y-auto [animation:slideInLeft_.3s_cubic-bezier(.2,.8,.2,1)_both]">
             <div className="flex justify-between items-center mb-7">
               <span className="font-display font-bold text-[26px] leading-none tracking-[-.06em] text-ink">
                 smarttemp<span className="text-terracotta">.</span>
@@ -207,7 +211,7 @@ const Navbar = () => {
           <div className="flex-1 bg-ink/45 animate-fadeIn" onClick={() => setMenuOpen(false)} />
         </div>
       )}
-    </header>
+    </>
   );
 };
 
