@@ -384,9 +384,9 @@ exports.deleteTemplate = async (req, res) => {
 };
 
 // Ownership-gated download of a template's deliverable.
-// Allowed if: the template is free, the requester is an admin, OR the requester
-// has an order containing this template. Streams the private file, or returns
-// the external link when the template is delivered as a link (e.g. Figma).
+// Allowed ONLY when the requester has a COMPLETED order containing this template
+// (no admin/free bypass — a failed or pending payment never unlocks it). Streams
+// the private file, or returns the external link when delivered as a link.
 exports.downloadTemplate = async (req, res) => {
   try {
     const { templateId } = req.params;
@@ -395,25 +395,20 @@ exports.downloadTemplate = async (req, res) => {
       return res.status(404).json({ status: "Error", message: "Template not found" });
     }
 
-    const isAdmin = req.role === "admin";
-    const isFree = template.template_type === "free";
-    let owns = isAdmin || isFree;
+    // Download is gated strictly on a COMPLETED order for THIS user containing
+    // this template. No admin / free-type shortcuts: pending or failed payments
+    // (and anyone without a completed order) cannot download. Free templates are
+    // still obtained the normal way — a ₹0 checkout creates a completed order.
+    const order = await Order.findOne({
+      userId: req.userId,
+      orderStatus: "completed",
+      "items.templateId": templateId,
+    }).select("_id");
 
-    if (!owns) {
-      // Only a COMPLETED (successfully paid) order grants download access —
-      // pending or failed payments must not.
-      const order = await Order.findOne({
-        userId: req.userId,
-        orderStatus: "completed",
-        "items.templateId": templateId,
-      }).select("_id");
-      owns = Boolean(order);
-    }
-
-    if (!owns) {
+    if (!order) {
       return res.status(403).json({
         status: "Error",
-        message: "You need to complete payment for this template before downloading it.",
+        message: "You can download this template only after a successful purchase.",
       });
     }
 

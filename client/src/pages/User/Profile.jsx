@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Download, Settings, LogOut, ShoppingBag, Bookmark, Heart } from "lucide-react";
+import { Download, Settings, LogOut, ShoppingBag, Bookmark, Heart, Lock, AlertCircle, RefreshCw } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useFavorites } from "../../context/FavoritesContext";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Card from "../../components/blogCard";
 import TemplateCard from "../../components/templateCard";
+import ErrorState from "../../components/ErrorState";
 import OrderService from "../../api/order";
 import TemplateService from "../../api/template";
 import FavoritesService from "../../api/favorites";
@@ -14,9 +15,14 @@ import { getProfile, updateProfile } from "../../api/auth";
 import { getTemplateImageUrl, getServerAssetUrl } from "../../utils/assetUrl";
 
 const STATUS_STYLES = {
-  pending: "bg-terracotta/10 text-terracotta",
-  completed: "bg-successGreen/10 text-successGreen",
-  failed: "bg-likeRed/10 text-likeRed",
+  pending: "bg-warnBg text-warnText",
+  completed: "bg-okBg text-successGreen",
+  failed: "bg-errBg text-err",
+};
+// Inline note shown under non-downloadable rows (Error States design #08).
+const STATUS_NOTE = {
+  pending: "Payment pending — download unlocks once confirmed.",
+  failed: "Payment failed — this order wasn't completed, so it can't be downloaded.",
 };
 
 const emptyEditForm = { name: "", contact: "", address: "", city: "", state: "", pincode: "" };
@@ -40,7 +46,7 @@ const Profile = () => {
   const [ordersError, setOrdersError] = useState(null);
 
   const [downloadingId, setDownloadingId] = useState(null);
-  const [downloadError, setDownloadError] = useState(null);
+  const [downloadError, setDownloadError] = useState(null); // { key, message }
 
   const [wishlistTemplates, setWishlistTemplates] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(true);
@@ -58,6 +64,14 @@ const Profile = () => {
     else if (user) setLoading(false);
   }, [navigate, authLoading, user]);
 
+  const fetchOrders = useCallback(() => {
+    setOrdersLoading(true); setOrdersError(null);
+    return OrderService.getOrdersByUser().then((res) => {
+      if (res.status === "Success") setOrders(res.orders || []);
+      else setOrdersError(res.message || "Failed to fetch orders");
+    }).catch((e) => setOrdersError(e.message || "Failed to fetch orders")).finally(() => setOrdersLoading(false));
+  }, []);
+
   useEffect(() => {
     if (!user) return;
     getProfile().then((res) => {
@@ -66,13 +80,8 @@ const Profile = () => {
         setEditForm({ name: res.user.name || "", contact: res.user.contact || "", address: res.user.address || "", city: res.user.city || "", state: res.user.state || "", pincode: res.user.pincode || "" });
       }
     }).catch((e) => console.error(e));
-
-    setOrdersLoading(true);
-    OrderService.getOrdersByUser().then((res) => {
-      if (res.status === "Success") setOrders(res.orders || []);
-      else setOrdersError(res.message || "Failed to fetch orders");
-    }).catch((e) => setOrdersError(e.message || "Failed to fetch orders")).finally(() => setOrdersLoading(false));
-  }, [user]);
+    fetchOrders();
+  }, [user, fetchOrders]);
 
   useEffect(() => {
     if (!user) return;
@@ -91,12 +100,14 @@ const Profile = () => {
   const handleLogout = async () => { try { await authLogout(); } catch (e) { console.log(e); } };
   const handleEditChange = (e) => setEditForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleDownload = async (templateId, templateName) => {
+  const handleDownload = async (rowKey, templateId, templateName) => {
     try {
-      setDownloadError(null); setDownloadingId(templateId);
+      setDownloadError(null); setDownloadingId(rowKey);
       const res = await TemplateService.downloadTemplate(templateId, templateName);
       if (res?.type === "link" && res.link) window.open(res.link, "_blank", "noopener,noreferrer");
-    } catch (err) { setDownloadError(err.message || "Failed to download template"); }
+    } catch (err) {
+      setDownloadError({ key: rowKey, message: err.message || "Download failed — please try again." });
+    }
     finally { setDownloadingId(null); }
   };
 
@@ -153,7 +164,7 @@ const Profile = () => {
         {/* Edit form */}
         {editing && (
           <form onSubmit={handleSaveProfile} className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-x-8 gap-y-5 py-8 border-b border-line animate-fadeIn">
-            {profileError && <div className="col-span-full p-3 bg-[#F4DEDA] text-likeRed text-sm">{profileError}</div>}
+            {profileError && <div className="col-span-full flex items-start gap-2 p-3.5 rounded-[14px] bg-errBg border border-errBorder text-errText text-sm"><AlertCircle size={16} className="shrink-0 mt-0.5 text-err" />{profileError}</div>}
             <input type="text" name="name" placeholder="Full name" value={editForm.name} onChange={handleEditChange} className={input} />
             <input type="tel" name="contact" placeholder="Phone number" value={editForm.contact} onChange={handleEditChange} className={input} />
             <input type="text" name="address" placeholder="Address" value={editForm.address} onChange={handleEditChange} className={input} />
@@ -184,32 +195,56 @@ const Profile = () => {
 
         <h2 className="font-display text-[27px] mb-6 m-0">{tabTitle}</h2>
 
-        {downloadError && menu === "purchasedItems" && <div className="mb-4 p-3 bg-[#F4DEDA] text-likeRed text-sm">{downloadError}</div>}
-
         {/* Purchased */}
         {menu === "purchasedItems" && (
           ordersLoading ? <p className="text-muted2 py-10">Loading your orders…</p>
-          : ordersError ? <p className="text-likeRed py-10">{ordersError}</p>
+          : ordersError ? (
+            <ErrorState
+              title="We couldn't load your orders"
+              message="The server didn't respond. Check your connection and try again."
+              onRetry={fetchOrders}
+              secondaryLabel="Back to home"
+              onSecondary={() => navigate("/")}
+            />
+          )
           : purchasedItems.length === 0 ? (
             <div className="py-12 text-center text-muted2">You haven't purchased any templates yet.<br />
               <button onClick={() => navigate("/templates")} className="mt-3.5 h-[46px] px-5 rounded-full bg-ink text-cream font-semibold text-sm">Browse Templates</button>
             </div>
           ) : (
             <div className="border-t border-ink">
-              {purchasedItems.map((item) => (
-                <div key={item.key} className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-x-6 gap-y-3 items-center py-5 border-b border-line">
-                  <div className="col-span-2 min-w-0">
-                    <p onClick={() => navigate(`/templates/${item.templateId}`)} className="font-display text-[24px] leading-[1.15] cursor-pointer hover:text-terracotta transition-colors m-0">{item.templateName}</p>
-                    <p className="font-mono text-[12px] text-muted2 mt-1 m-0">Qty: {item.quantity} · {item.orderDate ? new Date(item.orderDate).toLocaleDateString() : ""}</p>
+              {purchasedItems.map((item) => {
+                const completed = item.orderStatus === "completed";
+                const rowErr = downloadError && downloadError.key === item.key ? downloadError.message : null;
+                return (
+                  <div key={item.key} className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-x-6 gap-y-3 items-center py-5 border-b border-line">
+                    <div className="col-span-2 min-w-0">
+                      <p onClick={() => navigate(`/templates/${item.templateId}`)} className="font-display text-[24px] leading-[1.15] cursor-pointer hover:text-terracotta transition-colors m-0">{item.templateName}</p>
+                      <p className="font-mono text-[12px] text-muted2 mt-1 m-0">{item.orderDate ? new Date(item.orderDate).toLocaleDateString() : ""}</p>
+                      {rowErr ? (
+                        <p className="flex items-center gap-1.5 text-[13px] text-err mt-2 m-0"><AlertCircle size={14} className="shrink-0" /> {rowErr}</p>
+                      ) : !completed && STATUS_NOTE[item.orderStatus] ? (
+                        <p className={`flex items-center gap-1.5 text-[13px] mt-2 m-0 ${item.orderStatus === "failed" ? "text-err" : "text-warnText"}`}>
+                          <AlertCircle size={14} className="shrink-0" /> {STATUS_NOTE[item.orderStatus]}
+                        </p>
+                      ) : null}
+                    </div>
+                    <span className={`justify-self-start font-mono text-[11px] font-medium tracking-[.06em] uppercase px-2.5 py-1 rounded-full capitalize ${STATUS_STYLES[item.orderStatus] || "bg-creamAlt text-muted2"}`}>{item.orderStatus}</span>
+                    <span className="font-display text-[26px]">₹{item.price * item.quantity}</span>
+                    {completed ? (
+                      <button onClick={() => handleDownload(item.key, item.templateId, item.templateName)} disabled={downloadingId === item.key}
+                        className={`h-11 px-[18px] rounded-full flex gap-2 items-center justify-center font-semibold text-sm transition-colors disabled:opacity-50 ${rowErr ? "border border-err text-err hover:bg-err hover:text-cream" : "border border-ink hover:bg-ink hover:text-cream"}`}>
+                        {rowErr ? <RefreshCw size={16} /> : <Download size={16} />} {downloadingId === item.key ? "Preparing…" : rowErr ? "Retry" : "Download"}
+                      </button>
+                    ) : (
+                      <button disabled title="Available after a successful purchase"
+                        className="h-11 px-[18px] rounded-full border border-line text-faint flex gap-2 items-center justify-center font-semibold text-sm cursor-not-allowed">
+                        <Lock size={15} /> Download
+                      </button>
+                    )}
                   </div>
-                  <span className={`justify-self-start font-mono text-[11px] font-medium tracking-[.06em] uppercase px-2.5 py-1 rounded-full capitalize ${STATUS_STYLES[item.orderStatus] || "bg-creamAlt text-muted2"}`}>{item.orderStatus}</span>
-                  <span className="font-display text-[26px]">₹{item.price * item.quantity}</span>
-                  <button onClick={() => handleDownload(item.templateId, item.templateName)} disabled={downloadingId === item.templateId}
-                    className="h-11 px-[18px] rounded-full border border-ink flex gap-2 items-center justify-center font-semibold text-sm hover:bg-ink hover:text-cream transition-colors disabled:opacity-50">
-                    <Download size={16} /> {downloadingId === item.templateId ? "Preparing…" : "Download"}
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )
         )}

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Heart, Bookmark, ArrowLeft, AlertCircle } from "lucide-react";
+import { Heart, Bookmark, ArrowLeft } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import ErrorState from "../../components/ErrorState";
 import BlogContent from "../../components/BlogContent";
 import BlogService from "../../api/blog";
 import { getServerAssetUrl } from "../../utils/assetUrl";
@@ -82,10 +83,17 @@ const BlogIndividual = () => {
     return (
       <div className="min-h-screen flex flex-col bg-cream text-ink">
         <Navbar />
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-5 gap-3">
-          <AlertCircle size={38} className="text-likeRed" />
-          <p className="font-display text-[22px] m-0">{error || "Blog not found"}</p>
-          <button onClick={() => navigate("/blogs")} className="mt-2 h-12 px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">Back to blogs</button>
+        <div className="flex-1 max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 py-10 flex items-center">
+          <div className="w-full">
+            <ErrorState
+              title={error ? "We couldn't load this article" : "Article not found"}
+              message={error ? "The server didn't respond. Please try again in a moment." : "This article may have been removed or the link is incorrect."}
+              retryLabel="Back to blogs"
+              onRetry={() => navigate("/blogs")}
+              secondaryLabel="Go to home"
+              onSecondary={() => navigate("/")}
+            />
+          </div>
         </div>
         <Footer />
       </div>

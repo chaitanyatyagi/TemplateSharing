@@ -15,11 +15,16 @@ import BlogIndividual from './pages/User/BlogIndividual';
 import Template from './pages/User/Template';
 import TemplateIndividual from './pages/User/TemplateIndividual';
 import Cart from './pages/User/Cart';
+import NotFound from './pages/User/NotFound';
 import './index.css'
 
 function App() {
   return (
-    <SnackbarProvider>
+    <SnackbarProvider
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      autoHideDuration={4000}
+      maxSnack={3}
+      preventDuplicate>
       <Router>
         <AuthProvider>
           <FavoritesProvider>
@@ -49,6 +54,7 @@ function App() {
                     <Admin />
                   </ProtectedRoute>
                 } />
+                <Route path="*" element={<NotFound />} />
               </Routes>
               <LoginPromoPopup />
               {/* <Footer /> */}

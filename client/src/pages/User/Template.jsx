@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { PackageOpen, AlertCircle } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import TemplateCard from "../../components/templateCard";
+import ErrorState from "../../components/ErrorState";
 import TemplateService from "../../api/template";
 import { getTemplateImageUrl } from "../../utils/assetUrl";
 
@@ -14,25 +15,25 @@ const OPTIONS = [
 ];
 
 const Template = () => {
+  const navigate = useNavigate();
   const [category, setCategory] = useState("all");
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const run = async () => {
-      try {
-        setLoading(true); setError(null);
-        const res = category === "all"
-          ? await TemplateService.getAllTemplates()
-          : await TemplateService.getTemplatesByCategory(category);
-        if (res.status === "Success") setTemplates(res.templates || []);
-        else setError(res.message || "Failed to fetch templates");
-      } catch (err) { setError(err.message || "Failed to fetch templates"); }
-      finally { setLoading(false); }
-    };
-    run();
+  const fetchTemplates = useCallback(async () => {
+    try {
+      setLoading(true); setError(null);
+      const res = category === "all"
+        ? await TemplateService.getAllTemplates()
+        : await TemplateService.getTemplatesByCategory(category);
+      if (res.status === "Success") setTemplates(res.templates || []);
+      else setError(res.message || "Failed to fetch templates");
+    } catch (err) { setError(err.message || "Failed to fetch templates"); }
+    finally { setLoading(false); }
   }, [category]);
+
+  useEffect(() => { fetchTemplates(); }, [fetchTemplates]);
 
   return (
     <div className="min-h-screen flex flex-col bg-cream text-ink">
@@ -73,17 +74,19 @@ const Template = () => {
         </div>
 
         {error ? (
-          <div className="py-20 flex flex-col items-center text-center gap-2">
-            <AlertCircle size={38} className="text-likeRed" />
-            <p className="font-display text-[26px] m-0">{error}</p>
-            <button onClick={() => window.location.reload()} className="mt-4 h-12 px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">Retry</button>
-          </div>
+          <ErrorState
+            title="We couldn't load templates"
+            message="The server didn't respond. Check your connection and try again."
+            onRetry={fetchTemplates}
+            secondaryLabel="Back to home"
+            onSecondary={() => navigate("/")}
+          />
         ) : !loading && templates.length === 0 ? (
-          <div className="py-20 flex flex-col items-center text-center gap-2">
-            <PackageOpen size={38} className="text-faint" />
-            <p className="font-display text-[22px] m-0">No templates in this category yet</p>
-            <p className="text-muted2 text-sm m-0">Try a different category or check back soon.</p>
-          </div>
+          <ErrorState
+            variant="empty"
+            title="No templates in this category yet"
+            message="Try a different category or check back soon."
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-14">
             {loading

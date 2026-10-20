@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ShoppingCart, Check, Heart, ArrowLeft, Download, Mail, AlertCircle } from "lucide-react";
+import { ShoppingCart, Check, Heart, ArrowLeft, Download, Mail } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import ErrorState from "../../components/ErrorState";
 import TemplateService from "../../api/template";
 import { getTemplateImageUrl } from "../../utils/assetUrl";
 import { useCart } from "../../context/CartContext";
@@ -68,10 +69,17 @@ const TemplateIndividual = () => {
     return (
       <div className="min-h-screen flex flex-col bg-cream text-ink">
         <Navbar />
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-5 gap-3">
-          <AlertCircle size={38} className="text-likeRed" />
-          <p className="font-display text-[22px] m-0">{error || "Template not found"}</p>
-          <button onClick={() => navigate("/templates")} className="mt-2 h-12 px-6 rounded-full bg-ink text-cream font-semibold hover:bg-terracotta transition-colors">Back to templates</button>
+        <div className="flex-1 max-w-[1320px] w-full mx-auto px-5 sm:px-8 lg:px-12 py-10 flex items-center">
+          <div className="w-full">
+            <ErrorState
+              title={error ? "We couldn't load this template" : "Template not found"}
+              message={error ? "The server didn't respond. Please try again in a moment." : "This template may have been removed or the link is incorrect."}
+              retryLabel="Back to templates"
+              onRetry={() => navigate("/templates")}
+              secondaryLabel="Go to home"
+              onSecondary={() => navigate("/")}
+            />
+          </div>
         </div>
         <Footer />
       </div>

@@ -47,6 +47,19 @@ export default {
         gold: "#F5D76E",           // marquee band, price pills
         successGreen: "#1F7A4C",
         likeRed: "#B3261E",
+
+        // ---- Error States — Cobalt semantic palette ----
+        errText: "#B42318",   // error heading / strong text
+        errInk: "#7A1A12",    // error darkest (banner titles)
+        err: "#D1352B",       // error accent (icons, borders, buttons)
+        errBg: "#FDECEA",     // error surface
+        errBorder: "#F5C2BD", // error border
+        warnText: "#8A5300",  // warning text
+        warn: "#F5B83D",      // warning accent
+        warnBg: "#FFF4D6",    // warning surface
+        warnBorder: "#F3DC97",// warning border
+        infoBg: "#E8EDFC",    // info surface (cobalt tint)
+        okBg: "#E3F3EA",      // success surface
       },
       fontSize: {
         xl: "30px",

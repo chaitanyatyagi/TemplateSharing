@@ -59,8 +59,24 @@ const Contact = () => {
         {/* Form */}
         <div className="flex-1 min-w-0 basis-[420px] bg-paper border border-ink rounded-2xl p-6 sm:p-8 flex flex-col gap-5 [animation:rise_.8s_.1s_both]">
           <h2 className="font-display text-[25px] m-0">Send us a message</h2>
-          {success && <div className="flex items-start gap-2 p-3 border border-successGreen text-successGreen text-sm"><CheckCircle2 size={18} className="shrink-0 mt-0.5" />{success}</div>}
-          {error && <div className="flex items-start gap-2 p-3 bg-[#F4DEDA] text-likeRed text-sm"><AlertCircle size={18} className="shrink-0 mt-0.5" />{error}</div>}
+          {success && (
+            <div className="flex items-start gap-2.5 p-4 rounded-[14px] bg-okBg border border-successGreen/30">
+              <CheckCircle2 size={18} className="shrink-0 mt-0.5 text-successGreen" />
+              <div>
+                <p className="font-semibold text-successGreen text-sm m-0">Message sent</p>
+                <p className="text-successGreen/90 text-sm mt-0.5 m-0">{success}</p>
+              </div>
+            </div>
+          )}
+          {error && (
+            <div className="flex items-start gap-2.5 p-4 rounded-[14px] bg-errBg border border-errBorder animate-shake">
+              <AlertCircle size={18} className="shrink-0 mt-0.5 text-err" />
+              <div>
+                <p className="font-semibold text-errInk text-sm m-0">Your message wasn't sent</p>
+                <p className="text-errText text-sm mt-0.5 m-0">{error} Please try again.</p>
+              </div>
+            </div>
+          )}
           <form onSubmit={submit} className="flex flex-col gap-6">
             <input type="text" name="name" placeholder="Your name" value={form.name} onChange={change} className={input} required />
             <input type="email" name="email" placeholder="Email address" value={form.email} onChange={change} className={input} required />

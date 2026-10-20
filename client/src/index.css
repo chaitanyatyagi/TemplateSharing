@@ -20,9 +20,33 @@ body {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes drop { from { opacity: 0; transform: translate(-50%,-16px); } to { opacity: 1; transform: translate(-50%,0); } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 15%,55% { transform: translateX(-7px); } 35%,75% { transform: translateX(7px); } }
 .animate-rise { animation: rise .8s cubic-bezier(.2,.8,.2,1) both; }
 .animate-fadeIn { animation: fadeIn .35s both; }
 .animate-marquee { animation: marquee 38s linear infinite; }
+.animate-shake { animation: shake .45s cubic-bezier(.36,.07,.19,.97) both; }
+
+/* ---- Toasts (notistack) — Cobalt dark pill ---- */
+.notistack-MuiContent {
+  background: #0E1A3A !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  font-family: 'Instrument Sans', Inter, system-ui, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 10px 18px !important;
+  box-shadow: 0 10px 30px rgba(14,26,58,.28) !important;
+  min-width: auto !important;
+}
+.notistack-MuiContent-success #notistack-snackbar::before { background: #1F7A4C; }
+.notistack-MuiContent-error   #notistack-snackbar::before { background: #D1352B; }
+.notistack-MuiContent-warning #notistack-snackbar::before { background: #F5B83D; }
+.notistack-MuiContent-info    #notistack-snackbar::before,
+.notistack-MuiContent-default #notistack-snackbar::before { background: #F5D76E; }
+.notistack-MuiContent #notistack-snackbar { gap: 10px; padding: 0; }
+.notistack-MuiContent #notistack-snackbar::before {
+  content: ""; width: 9px; height: 9px; border-radius: 999px; flex: none; display: inline-block;
+}
 
 /* ---- Rich blog content (rendered HTML), Cobalt styling ---- */
 .blog-content { color: #26315A; line-height: 1.75; font-size: 19px; font-family: 'Instrument Sans', sans-serif; }

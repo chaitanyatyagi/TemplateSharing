@@ -156,7 +156,16 @@ const Cart = () => {
             ) : (
               <>
                 <h2 className="font-display text-[25px] m-0">Billing details</h2>
-                {error && <div className="flex items-start gap-2 p-3 bg-[#F4DEDA] text-likeRed text-sm"><AlertCircle size={16} className="shrink-0 mt-0.5" />{error}</div>}
+                {error && (
+                  <div className="flex items-start gap-2.5 p-4 rounded-[14px] bg-errBg border border-errBorder animate-shake">
+                    <AlertCircle size={18} className="shrink-0 mt-0.5 text-err" />
+                    <div>
+                      <p className="font-semibold text-errInk text-sm m-0">Payment didn't go through</p>
+                      <p className="text-errText text-sm mt-0.5 m-0">{error}</p>
+                      <p className="text-errText/80 text-[13px] mt-1.5 m-0">You haven't been charged and your cart is saved.</p>
+                    </div>
+                  </div>
+                )}
                 <form onSubmit={placeOrder} className="flex flex-col gap-5 animate-fadeIn">
                   <input type="text" name="userName" placeholder="Full name" value={billing.userName} onChange={changeBilling} className={input} required />
                   <input type="email" name="userEmail" placeholder="Email" value={billing.userEmail} onChange={changeBilling} className={input} required />

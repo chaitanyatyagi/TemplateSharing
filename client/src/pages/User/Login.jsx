@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { AlertCircle } from "lucide-react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "../../config/firebase-config";
 import { googleSignup } from "../../api/auth";
@@ -45,7 +46,15 @@ const Login = () => {
           <img src={MainLogo} alt="SmartTemp" className="h-9 [filter:brightness(0)] opacity-90" />
           <p className="max-w-[380px] text-bodytext text-[17px] mt-3 m-0">Sign in to access your templates, downloads and saved content.</p>
 
-          {error && <div className="w-full p-3 bg-[#F4DEDA] text-likeRed text-sm">{error}</div>}
+          {error && (
+            <div className="w-full flex items-start gap-2.5 text-left p-4 rounded-[14px] bg-errBg border border-errBorder animate-shake">
+              <AlertCircle size={18} className="shrink-0 mt-0.5 text-err" />
+              <div>
+                <p className="font-semibold text-errInk text-sm m-0">We couldn't sign you in</p>
+                <p className="text-errText text-sm mt-0.5 m-0">{error}</p>
+              </div>
+            </div>
+          )}
 
           <button
             onClick={handleGoogleAuthClick}
