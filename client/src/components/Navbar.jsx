@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, ShoppingCart } from "lucide-react";
-import MainLogo from "../assets/main-logo-user.png";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -19,7 +18,7 @@ const initialsOf = (name) =>
 const MastheadLink = ({ label, active, onClick }) => (
   <button
     onClick={onClick}
-    className={`group relative font-sans text-[13px] font-semibold uppercase tracking-[.12em] pb-1.5 transition-colors ${
+    className={`group relative font-sans text-[13px] font-semibold uppercase tracking-[.12em] whitespace-nowrap pb-1.5 transition-colors ${
       active ? "text-ink" : "text-muted2 hover:text-ink"
     }`}
   >
@@ -55,16 +54,13 @@ const Navbar = () => {
   ];
   const allNav = [...leftNav, ...rightNav];
 
-  const Wordmark = ({ size = "text-[30px]", showMark = true }) => (
+  const Wordmark = ({ size = "text-[30px]" }) => (
     <button
       onClick={() => navigate("/")}
-      className="flex items-center gap-2.5 text-ink hover:opacity-80 transition-opacity"
+      className="text-ink hover:opacity-80 transition-opacity"
       aria-label="SmartTemp home"
     >
-      {showMark && (
-        <img src={MainLogo} alt="" className="h-[26px] w-auto [filter:brightness(0)_saturate(0)] opacity-90" />
-      )}
-      <span className={`font-display font-bold leading-none tracking-[-.06em] ${size}`}>
+      <span className={`font-display font-bold leading-none tracking-[-.06em] whitespace-nowrap ${size}`}>
         smarttemp<span className="text-terracotta">.</span>
       </span>
     </button>
@@ -119,18 +115,18 @@ const Navbar = () => {
     <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur-md border-b-2 border-ink">
       <div className="max-w-[1320px] mx-auto px-5 sm:px-8 lg:px-12">
         {/* Desktop — editorial masthead: links | centred wordmark | links + actions */}
-        <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center h-[84px] gap-6">
-          <nav className="flex items-center gap-[30px]">
+        <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center h-[84px] gap-4 xl:gap-8">
+          <nav className="flex items-center gap-5 xl:gap-[30px] min-w-0">
             {leftNav.map((n) => (
               <MastheadLink key={n.name} label={n.name} active={isActive(n.path)} onClick={() => navigate(n.path)} />
             ))}
           </nav>
 
           <div className="justify-self-center">
-            <Wordmark size="text-[32px]" />
+            <Wordmark size="text-[30px] xl:text-[32px]" />
           </div>
 
-          <div className="flex items-center gap-6 justify-end">
+          <div className="flex items-center gap-4 xl:gap-6 justify-end min-w-0">
             {rightNav.map((n) => (
               <MastheadLink key={n.name} label={n.name} active={isActive(n.path)} onClick={() => navigate(n.path)} />
             ))}
@@ -151,7 +147,7 @@ const Navbar = () => {
             </button>
           </div>
           <div className="justify-self-center">
-            <Wordmark size="text-[24px]" showMark={false} />
+            <Wordmark size="text-[23px]" />
           </div>
           <div className="justify-self-end flex items-center gap-2.5">
             <CartButton />
