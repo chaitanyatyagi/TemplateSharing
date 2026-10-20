@@ -112,7 +112,7 @@ const Navbar = () => {
     );
 
   return (
-    <header className="sticky top-0 z-40 bg-cream/90 backdrop-blur-md border-b-2 border-ink">
+    <header className="sticky top-0 z-40 bg-cream supports-[backdrop-filter]:bg-cream/90 backdrop-blur-md border-b-2 border-ink">
       <div className="max-w-[1320px] mx-auto px-5 sm:px-8 lg:px-12">
         {/* Desktop — editorial masthead: links | centred wordmark | links + actions */}
         <div className="hidden lg:grid grid-cols-[1fr_auto_1fr] items-center h-[84px] gap-4 xl:gap-8">
