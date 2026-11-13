@@ -117,6 +117,21 @@ const BlogService = {
     }
   },
 
+  // Upload a single inline content image (rich-text editor). Returns { status, url }.
+  uploadContentImage: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const response = await apiClient.post("/blog/content-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 120000,
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
+
   // Stream image (returns URL for direct use in img src)
   getImageStreamUrl: (filename, size = "thumbnail") => {
     // Remove file extension and add size suffix

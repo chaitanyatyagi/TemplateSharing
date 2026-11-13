@@ -27,11 +27,41 @@ const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 10 * 1024 * 1024, // 10MB per uploaded image file
+    // Text fields (notably `content`) must not be capped at multer's 1MB default,
+    // otherwise rich-text with any embedded markup gets silently rejected.
+    fieldSize: 25 * 1024 * 1024,
   },
 });
 
 exports.uploadImages = upload.single("image");
+
+// Inline content images for the rich-text editor. We store ONE optimized WebP and
+// return its public URL so the editor embeds `<img src="/api/blog/stream/…">`
+// instead of a multi-MB base64 data-URL (which bloats the document and blew past
+// the field-size limit, dropping the images on save).
+exports.uploadContentImage = upload.single("image");
+
+exports.createContentImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ status: "Error", message: "No image uploaded" });
+    }
+    const cleanOriginalName = req.file.originalname.replace(/\..+$/, "").replace(/\s+/g, "-");
+    const filename = `blog-content-${Date.now()}-${cleanOriginalName}.webp`;
+    await sharp(req.file.buffer)
+      .resize(1200, null, { withoutEnlargement: true })
+      .webp({ quality: 88 })
+      .toFile(path.join(blogsDir, filename));
+    return res.status(201).json({
+      status: "Success",
+      url: `/api/blog/stream/${filename}`,
+    });
+  } catch (error) {
+    console.error("Content image upload error:", error);
+    return res.status(500).json({ status: "Error", message: "Image upload failed" });
+  }
+};
 
 exports.processAndOptimizeImages = async (req, res, next) => {
   try {

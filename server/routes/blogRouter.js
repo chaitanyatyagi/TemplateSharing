@@ -48,6 +48,15 @@ router.post(
   blogController.toggleLike
 );
 
+// Inline content-image upload for the rich-text editor (admin only)
+router.post(
+  "/content-image",
+  authController.gAuth,
+  authController.checkAdmin,
+  blogController.uploadContentImage,
+  blogController.createContentImage
+);
+
 // Image streaming endpoint
 router.get(
   "/stream/:filename",
