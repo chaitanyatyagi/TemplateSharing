@@ -14,6 +14,16 @@ const ContactService = {
       throw new Error(handleApiError(error));
     }
   },
+
+  // Admin: list all contact-form submissions (newest first).
+  getAllContacts: async () => {
+    try {
+      const response = await apiClient.post("/contact/get-all");
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
+  },
 };
 
 export default ContactService;

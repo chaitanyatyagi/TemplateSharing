@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, X, Bell, ArrowUpRight, LayoutDashboard, ShoppingBag, Users, LayoutTemplate, Newspaper } from "lucide-react";
+import { Menu, X, Bell, ArrowUpRight, LayoutDashboard, ShoppingBag, Users, LayoutTemplate, Newspaper, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { admin } from "../../api/admin";
@@ -8,6 +8,7 @@ import OrderPage from "./Order";
 import Template from "./Template";
 import Blog from "./Blog";
 import UserData from "./UserData";
+import Messages from "./Messages";
 import MainLogo from "../../assets/main-logo-user.png";
 
 const MENU = [
@@ -16,6 +17,7 @@ const MENU = [
   { name: "Users Data", icon: Users },
   { name: "Templates", icon: LayoutTemplate },
   { name: "Blogs", icon: Newspaper },
+  { name: "Messages", icon: Mail },
 ];
 
 const Admin = () => {
@@ -89,6 +91,7 @@ const Admin = () => {
           {activeMenu === "Users Data" && <UserData />}
           {activeMenu === "Templates" && <Template />}
           {activeMenu === "Blogs" && <Blog />}
+          {activeMenu === "Messages" && <Messages />}
         </div>
       </div>
 

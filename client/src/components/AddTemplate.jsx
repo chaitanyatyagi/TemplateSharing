@@ -137,7 +137,7 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
   return (
     <div className="flex flex-col w-full h-full px-4 sm:px-6 lg:px-10 py-6 overflow-y-auto">
       {/* Top Bar */}
-      <div className="w-full bg-ink text-white flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 rounded-t-md">
+      <div className="w-full bg-ink text-white flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 py-3 rounded-t-md">
         <div className="flex items-center gap-3">
           <button
             className="flex items-center gap-2 text-white hover:text-line transition"
@@ -145,10 +145,10 @@ const AddTemplate = ({ activeMenu, setActiveMenu }) => {
             disabled={loading}
           >
             <ArrowLeft size={18} />
-            <span className="font-semibold">Back to Main Section</span>
+            <span className="font-semibold"><span className="hidden sm:inline">Back to Main Section</span><span className="sm:hidden">Back</span></span>
           </button>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <button
             type="button"
             className="flex items-center gap-2 bg-paper/10 text-white border border-white/40 px-3 py-1.5 rounded-md hover:bg-paper/20 transition"

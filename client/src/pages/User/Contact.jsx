@@ -5,6 +5,10 @@ import Footer from "../../components/Footer";
 import ContactImage from "../../assets/contact-page.png";
 import ContactService from "../../api/contact";
 
+// Support inbox for the "Email us" / custom-request links (same inbox the contact
+// form routes to). Change this to a dedicated support address if you prefer.
+const SUPPORT_EMAIL = "chaitanyatyagi1540@gmail.com";
+
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", comments: "" });
   const [loading, setLoading] = useState(false);
@@ -38,20 +42,26 @@ const Contact = () => {
           <h1 className="font-display text-[clamp(40px,6vw,68px)] leading-[.9] tracking-[-.02em] m-0">Contact <em className="not-italic text-terracotta">us</em></h1>
           <p className="max-w-[440px] text-[18px] text-bodytext m-0">Questions, feedback or a custom request? Send us a message and we'll get back to you.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-            <div className="border border-line rounded-xl p-5 flex items-start gap-3 bg-paper">
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="border border-line rounded-xl p-5 flex items-start gap-3 bg-paper hover:border-ink transition-colors"
+            >
               <Mail size={18} className="text-terracotta mt-0.5 shrink-0" />
-              <div>
+              <div className="min-w-0">
                 <p className="font-semibold text-ink text-sm m-0">Email us</p>
-                <p className="text-muted2 text-sm mt-0.5 m-0">We reply to every message.</p>
+                <p className="text-muted2 text-sm mt-0.5 m-0 break-words">{SUPPORT_EMAIL}</p>
               </div>
-            </div>
-            <div className="border border-line rounded-xl p-5 flex items-start gap-3 bg-paper">
+            </a>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("Custom template request")}`}
+              className="border border-line rounded-xl p-5 flex items-start gap-3 bg-paper hover:border-ink transition-colors"
+            >
               <MessageSquare size={18} className="text-terracotta mt-0.5 shrink-0" />
-              <div>
+              <div className="min-w-0">
                 <p className="font-semibold text-ink text-sm m-0">Custom requests</p>
                 <p className="text-muted2 text-sm mt-0.5 m-0">Need a bespoke template? Ask us.</p>
               </div>
-            </div>
+            </a>
           </div>
           <img src={ContactImage} alt="Contact us" className="w-full max-w-md mt-2 rounded-2xl border border-line" />
         </div>
