@@ -5,6 +5,7 @@ import { useSnackbar } from "notistack";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import TemplateCard from "../../components/templateCard";
+import NewsletterForm from "../../components/NewsletterForm";
 import Home1 from "../../assets/home1.png";
 import TemplateService from "../../api/template";
 import BlogService from "../../api/blog";
@@ -161,10 +162,7 @@ const Home = () => {
             <h3 className="font-display text-[clamp(26px,3.2vw,40px)] leading-none m-0">Get productivity tips <em className="not-italic text-cream">in your inbox</em></h3>
             <p className="text-[#FFFFFF99] mt-4 m-0">Fresh templates and guides, no spam. Unsubscribe anytime.</p>
           </div>
-          <form onSubmit={(e) => e.preventDefault()} className="flex-1 basis-[360px] flex flex-wrap gap-3 items-stretch">
-            <input type="email" placeholder="Enter your email" className="flex-1 basis-[220px] h-14 bg-transparent border-b border-muted2 text-cream placeholder-faint text-[18px] outline-none focus:border-terracottaLight transition-colors" />
-            <button type="submit" className="h-14 px-7 rounded-full bg-cream text-ink font-semibold text-[15px] hover:bg-terracotta hover:text-paper active:scale-[.97] transition-all">Subscribe</button>
-          </form>
+          <NewsletterForm variant="home" />
         </div>
       </section>
 
