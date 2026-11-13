@@ -10,6 +10,7 @@ const templateRouter = require("./routes/templateRouter.js");
 const orderRouter = require("./routes/orderRouter.js");
 const blogRouter = require("./routes/blogRouter.js");
 const contactRouter = require("./routes/contactRouter.js");
+const newsletterRouter = require("./routes/newsletterRouter.js");
 
 dotenv.config({ path: "./.env" });
 const NODE_ENV = process.env.NODE_ENV || "development";
@@ -84,6 +85,7 @@ app.use("/api/template", templateRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/contact", contactRouter);
+app.use("/api/newsletter", newsletterRouter);
 app.all("/*path", (req, res) => {
   res.status(404).json({
     message: `Can't find ${req.originalUrl} on this server!`,

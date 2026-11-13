@@ -1,9 +1,31 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLogo from "../assets/main-logo-user.png";
+import NewsletterService from "../api/newsletter";
 
 const Footer = () => {
   const navigate = useNavigate();
   const year = new Date().getFullYear();
+
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState("idle"); // idle | loading | success | error
+  const [message, setMessage] = useState("");
+
+  const subscribe = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) { setState("error"); setMessage("Please enter your email."); return; }
+    try {
+      setState("loading"); setMessage("");
+      const res = await NewsletterService.subscribe(email.trim());
+      if (res.status === "Success") {
+        setState("success"); setMessage(res.message || "You're subscribed!"); setEmail("");
+      } else {
+        setState("error"); setMessage(res.message || "Subscription failed.");
+      }
+    } catch (err) {
+      setState("error"); setMessage(err.message || "Subscription failed. Please try again.");
+    }
+  };
   const links = [
     { name: "Home", path: "/" },
     { name: "Templates", path: "/templates" },
@@ -18,7 +40,7 @@ const Footer = () => {
           Made for <em className="not-italic text-gold">productive</em> people.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.8fr_1fr] gap-10 border-t border-inkSoft pt-10 mt-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1.2fr] gap-10 border-t border-inkSoft pt-10 mt-14">
           <div className="flex flex-col gap-3.5">
             <img src={MainLogo} alt="SmartTemp" className="h-6 w-auto self-start [filter:brightness(0)_invert(1)]" />
             <p className="max-w-[320px] text-sm text-[#B9C1DA]">
@@ -40,6 +62,27 @@ const Footer = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <div className="font-sans text-[11px] font-medium tracking-[.1em] text-faint mb-4">STAY IN THE LOOP</div>
+            <p className="text-sm text-[#B9C1DA] mb-3.5">Fresh templates and guides in your inbox. No spam.</p>
+            <form className="flex gap-2 border-b border-inkSoft" onSubmit={subscribe}>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); if (state !== "loading") { setState("idle"); setMessage(""); } }}
+                placeholder="Enter your email"
+                className="flex-1 min-w-0 h-12 bg-transparent text-cream placeholder-faint outline-none text-[15px]"
+                disabled={state === "loading"}
+              />
+              <button type="submit" disabled={state === "loading"} className="text-gold font-semibold text-sm hover:text-cream transition-colors disabled:opacity-60">
+                {state === "loading" ? "Joining…" : "Subscribe →"}
+              </button>
+            </form>
+            {message && (
+              <p className={`mt-2.5 text-[13px] ${state === "error" ? "text-[#F7B2A8]" : "text-gold"}`}>{message}</p>
+            )}
           </div>
 
         </div>
